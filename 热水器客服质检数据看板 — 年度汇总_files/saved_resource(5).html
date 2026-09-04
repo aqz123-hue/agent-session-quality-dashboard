@@ -1,0 +1,1626 @@
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>热水器客服质检数据看板 — 8月</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    background: #f5f7fa;
+    color: #1a2332;
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a3a5c 0%, #2a5a8a 100%);
+    padding: 22px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #d0d7e0;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #2979ff, #00b0ff);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .header-title h1 { font-size: 20px; font-weight: 700; color: #ffffff; }
+  .header-title p { font-size: 13px; color: #b0c8e8; margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #b0c8e8; }
+  .badge {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    color: #ffffff;
+    font-size: 12px;
+  }
+  .main { padding: 24px 32px; }
+  .section-title {
+    font-size: 14px;
+    color: #1a6fb5;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::before {
+    content: '';
+    width: 3px; height: 14px;
+    background: #2979ff;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr repeat(5, 1fr);
+    grid-template-rows: auto auto;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .kpi-grid .span-2rows {
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .kpi-card {
+    background: #ffffff;
+    border: 1px solid #e0e5ec;
+    border-radius: 12px;
+    padding: 18px 16px 14px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+  .kpi-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 2px 2px 0 0;
+  }
+  .kpi-card.blue::after   { background: linear-gradient(90deg,#2979ff,#00b0ff); }
+  .kpi-card.green::after  { background: linear-gradient(90deg,#00c853,#2e7d32); }
+  .kpi-card.amber::after  { background: linear-gradient(90deg,#ff8f00,#e65100); }
+  .kpi-card.purple::after { background: linear-gradient(90deg,#7c4dff,#e040fb); }
+  .kpi-card.teal::after   { background: linear-gradient(90deg,#00bcd4,#80deea); }
+  .kpi-card.red::after    { background: linear-gradient(90deg,#f44336,#ff7961); }
+  .kpi-label { font-size: 12px; color: #6b7a8d; margin-bottom: 10px; }
+  .kpi-value { font-size: 30px; font-weight: 700; line-height: 1; }
+  .kpi-value.blue   { color: #1976d2; }
+  .kpi-value.green  { color: #2e7d32; }
+  .kpi-value.amber  { color: #e65100; }
+  .kpi-value.purple { color: #7b1fa2; }
+  .kpi-value.teal   { color: #00838f; }
+  .kpi-value.red    { color: #c62828; }
+  .kpi-sub { font-size: 11px; color: #8a96a5; margin-top: 6px; }
+  .kpi-delta { font-size: 11px; margin-top: 4px; }
+  .kpi-delta.neg { color: #c62828; }
+  .kpi-delta.pos { color: #2e7d32; }
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .charts-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .chart-card {
+    background: #ffffff;
+    border: 1px solid #e0e5ec;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .chart-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .chart-card-title span { font-size: 11px; color: #8a96a5; font-weight: 400; }
+  .chart-wrap { position: relative; width: 100%; }
+  .agent-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+  .agent-name { font-size: 13px; width: 60px; flex-shrink: 0; color: #2c3e50; }
+  .progress-track {
+    flex: 1;
+    height: 8px;
+    background: #e0e5ec;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease;
+  }
+  .agent-score { font-size: 13px; font-weight: 700; width: 36px; text-align: right; color: #1976d2; }
+  .agent-count { font-size: 11px; color: #8a96a5; width: 30px; text-align: right; }
+  .issue-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .issue-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+    border-left: 3px solid;
+    margin-bottom: 10px;
+  }
+  .issue-item.red    { border-color: #ef5350; }
+  .issue-item.amber  { border-color: #e65100; }
+  .issue-item.blue   { border-color: #1976d2; }
+  .issue-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .issue-dot.red   { background: #ef5350; }
+  .issue-dot.amber { background: #e65100; }
+  .issue-dot.blue  { background: #1976d2; }
+  .issue-text { font-size: 12.5px; color: #3a4a5c; line-height: 1.6; }
+  .issue-text strong { color: #1a2332; }
+  .table-card {
+    background: #ffffff;
+    border: 1px solid #e0e5ec;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .filter-btns { display: flex; gap: 6px; }
+  .filter-btn {
+    background: #e8ecf1;
+    border: none;
+    border-radius: 6px;
+    color: #4a5568;
+    font-size: 12px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .filter-btn.active, .filter-btn:hover { background: #2979ff; color: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th {
+    background: #f0f3f7;
+    color: #4a5568;
+    font-weight: 600;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #d0d7e0;
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #eef1f5;
+    color: #2c3e50;
+    vertical-align: middle;
+  }
+  tr:hover td { background: rgba(41,121,255,0.04); }
+  .score-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .score-high { background: rgba(46,125,50,0.1); color: #2e7d32; }
+  .score-mid  { background: rgba(230,81,0,0.1); color: #e65100; }
+  .score-low  { background: rgba(198,40,40,0.1); color: #c62828; }
+  .tag {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+    margin: 1px;
+  }
+  .tag-done    { background: rgba(46,125,50,0.1); color: #2e7d32; }
+  .tag-none    { background: rgba(230,81,0,0.08); color: #e65100; }
+  .tag-fail    { background: rgba(158,158,158,0.1); color: #757575; }
+  .tag-unknown { background: rgba(100,100,100,0.1); color: #999; }
+  .remark-cell { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .remark-cell:hover { white-space: normal; overflow: visible; }
+  .pagination { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 12px; }
+  .page-btn {
+    background: #e8ecf1; border: none; border-radius: 5px;
+    color: #4a5568; padding: 4px 10px; cursor: pointer; font-size: 12px;
+  }
+  .page-btn:hover, .page-btn.active { background: #2979ff; color: #fff; }
+  .page-info { font-size: 12px; color: #8a96a5; }
+  .threshold-note {
+    font-size: 11px; color: #6b7a8d;
+    background: rgba(41,121,255,0.06);
+    border: 1px solid rgba(41,121,255,0.15);
+    border-radius: 6px;
+    padding: 4px 10px;
+    display: inline-block;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    background: #ffffff;
+    border: 1px solid #e0e5ec;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .summary-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .summary-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: bold; color: #fff;
+    flex-shrink: 0;
+  }
+  .summary-rank {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .summary-rank.rank-1 { background: #FFD700; color: #7a5c00; }
+  .summary-rank.rank-2 { background: #C0C0C0; color: #555; }
+  .summary-rank.rank-3 { background: #CD7F32; color: #fff; }
+  .summary-rank.rank-other { background: #8a96a5; color: #fff; }
+  .summary-name { font-size: 14px; font-weight: 700; color: #1a2332; }
+  .summary-score { font-size: 11px; color: #6b7a8d; margin-top: 1px; }
+  .summary-tags { display: flex; flex-wrap: nowrap; gap: 4px; margin-bottom: 8px; overflow: hidden; }
+  .s-tag {
+    font-size: 11px; padding: 3px 8px; border-radius: 4px;
+    background: rgba(25,118,210,0.08); border: 1px solid rgba(25,118,210,0.2); color: #1976d2;
+  }
+  .s-tag.warn { background: rgba(230,81,0,0.08); border-color: rgba(230,81,0,0.2); color: #e65100; }
+  .s-tag.good { background: rgba(46,125,50,0.08); border-color: rgba(46,125,50,0.2); color: #2e7d32; }
+  .s-tag.neutral { background: rgba(100,100,100,0.08); border-color: rgba(100,100,100,0.2); color: #666; }
+  .summary-text { font-size: 12.5px; color: #5a6a7c; line-height: 1.7; }
+  .summary-text strong { color: #2c3e50; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #f0f3f7; }
+  ::-webkit-scrollbar-thumb { background: #c0c8d0; border-radius: 2px; }
+  .table-scroll { overflow-x: auto; }
+  .radar-wrap { display: flex; align-items: center; gap: 24px; }
+  .radar-legend { flex-shrink: 0; }
+  .legend-item { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 12px; color: #6b7a8d; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<div class="main">
+
+  <div class="section-title">核心指标概览</div>
+  <div class="kpi-grid" id="kpiGrid"><div class="kpi-card blue span-2rows" style="grid-column:1">
+    <div class="kpi-label">总会话数</div>
+    <div class="kpi-value blue" style="font-size:32px">92</div>
+    <div class="kpi-sub">8月全月抽检（上期90条）</div>
+  </div><div class="kpi-card amber" style="grid-column:2;grid-row:1">
+      <div class="kpi-label">综合平均得分</div>
+      <div class="kpi-value amber">6.77</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 0.38</div>
+      <div class="kpi-delta neg">环比上期 ▼ 0.12</div>
+    </div><div class="kpi-card green" style="grid-column:3;grid-row:1">
+      <div class="kpi-label">服务态度均分</div>
+      <div class="kpi-value green">6.95</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 0.05</div>
+      <div class="kpi-delta neg">环比上期 ▼ 0.07</div>
+    </div><div class="kpi-card red" style="grid-column:4;grid-row:1">
+      <div class="kpi-label">需求挖掘均分</div>
+      <div class="kpi-value red">6.53</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 1.10 ⚠️</div>
+      <div class="kpi-delta pos">环比上期 ▲ 2.03</div>
+    </div><div class="kpi-card purple" style="grid-column:5;grid-row:1">
+      <div class="kpi-label">推荐介绍均分</div>
+      <div class="kpi-value purple">6.36</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 0.82</div>
+      <div class="kpi-delta neg">环比上期 ▼ 0.25</div>
+    </div><div class="kpi-card teal" style="grid-column:6;grid-row:1">
+      <div class="kpi-label">跟进维护均分</div>
+      <div class="kpi-value teal">6.73</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 0.49</div>
+      <div class="kpi-delta neg">环比上期 ▼ 0.26</div>
+    </div><div class="kpi-card red" style="grid-column:2;grid-row:2">
+      <div class="kpi-label">总核对率</div>
+      <div class="kpi-value red">52.0%</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 36.3 个百分点</div>
+      <div class="kpi-delta neg">环比上期 ▼ 4.2 个百分点</div>
+    </div><div class="kpi-card red" style="grid-column:3;grid-row:2">
+      <div class="kpi-label">新换装率</div>
+      <div class="kpi-value red">58.4%</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 34.7 个百分点</div>
+      <div class="kpi-delta neg">环比上期 ▼ 15.0 个百分点</div>
+    </div><div class="kpi-card red" style="grid-column:4;grid-row:2">
+      <div class="kpi-label">尺寸核对率</div>
+      <div class="kpi-value red">32.4%</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 49.4 个百分点</div>
+      <div class="kpi-delta neg">环比上期 ▼ 10.7 个百分点</div>
+    </div><div class="kpi-card red" style="grid-column:5;grid-row:2">
+      <div class="kpi-label">气源核对率</div>
+      <div class="kpi-value red">56.8%</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 29.5 个百分点</div>
+      <div class="kpi-delta pos">环比上期 ▲ 7.6 个百分点</div>
+    </div><div class="kpi-card amber" style="grid-column:6;grid-row:2">
+      <div class="kpi-label">网点核对率</div>
+      <div class="kpi-value amber">62.0%</div>
+      <div class="kpi-delta neg">vs 总部 ▼ 28.1 个百分点</div>
+      <div class="kpi-delta pos">环比上期 ▲ 7.5 个百分点</div>
+    </div></div>
+
+  <div class="charts-row-2" style="margin-bottom:24px">
+    <div class="chart-card">
+      <div class="chart-card-title">客服会话得分维度雷达图 <span>各维度与总部对比</span></div>
+      <div class="chart-wrap" style="height:280px">
+        <canvas id="radarChart" width="835" height="420" style="display: block; box-sizing: border-box; height: 280px; width: 556px;"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">四项核对维度雷达图 <span>整体核对率 vs 总部核对率</span></div>
+      <div class="chart-wrap" style="height:280px">
+        <canvas id="followRadarChart" width="835" height="420" style="display: block; box-sizing: border-box; height: 280px; width: 556px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">重点问题分析与改进建议</div>
+  <div class="charts-row-2" style="margin-bottom:24px">
+    <div class="chart-card">
+      <div class="chart-card-title">会话得分差距分析 <span>各维度与总部得分对比</span></div>
+      <div style="padding:12px 16px">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+          <thead>
+            <tr style="background:#f0f4f8;border-bottom:2px solid #d0d8e4">
+              <th style="padding:8px 10px;text-align:left;color:#3a4a5c;font-weight:600">评分维度</th>
+              <th style="padding:8px 10px;text-align:center;color:#3a4a5c;font-weight:600">本次得分</th>
+              <th style="padding:8px 10px;text-align:center;color:#3a4a5c;font-weight:600">总部得分</th>
+              <th style="padding:8px 10px;text-align:center;color:#3a4a5c;font-weight:600">差距</th>
+            </tr>
+          </thead>
+          <tbody id="scoreGapBody"><tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">服务态度</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:69.45652173913044%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:30px">6.95</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:69.95%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:30px">7.00</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-0.05</td>
+    </tr><tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">需求挖掘</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:65.33333333333333%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:30px">6.53</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:76.3%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:30px">7.63</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-1.1</td>
+    </tr><tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">推荐介绍</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:63.55555555555556%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:30px">6.36</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:71.8%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:30px">7.18</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-0.82</td>
+    </tr><tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">跟进维护</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:67.28260869565219%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:30px">6.73</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:72.2%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:30px">7.22</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-0.49</td>
+    </tr><tr style="border-top:2px solid #d0d8e4;background:#f7f9fc">
+    <td style="padding:9px 10px;color:#1a2332;font-weight:700">综合得分</td>
+    <td style="padding:9px 10px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+        <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+          <div style="width:67.67391304347828%;height:100%;background:#1565c0;border-radius:3px"></div>
+        </div>
+        <span style="color:#1565c0;font-weight:700;min-width:30px">6.77</span>
+      </div>
+    </td>
+    <td style="padding:9px 10px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+        <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+          <div style="width:71.50000000000001%;height:100%;background:rgba(46,125,50,0.55);border-radius:3px"></div>
+        </div>
+        <span style="color:#4a5568;font-weight:600;min-width:30px">7.15</span>
+      </div>
+    </td>
+    <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-0.38</td>
+  </tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">基础四项差距分析 <span>核对率与总部核对率对比</span></div>
+      <div style="padding:12px 16px">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+          <thead>
+            <tr style="background:#f0f4f8;border-bottom:2px solid #d0d8e4">
+              <th style="padding:8px 10px;text-align:left;color:#3a4a5c;font-weight:600">核对项</th>
+              <th style="padding:8px 10px;text-align:center;color:#3a4a5c;font-weight:600">本次核对率</th>
+              <th style="padding:8px 10px;text-align:center;color:#3a4a5c;font-weight:600">总部核对率</th>
+              <th style="padding:8px 10px;text-align:center;color:#3a4a5c;font-weight:600">差距</th>
+            </tr>
+          </thead>
+          <tbody id="followGapBody"><tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">新换装</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:58.44155844155844%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:42px">58.4%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:93.1%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:42px">93.1%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-34.7%</td>
+    </tr><tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">尺寸核对</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:32.35294117647059%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:42px">32.4%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:81.8%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:42px">81.8%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-49.4%</td>
+    </tr><tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">气源核对</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:56.75675675675676%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:42px">56.8%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:86.3%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:42px">86.3%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-29.5%</td>
+    </tr><tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">网点核对</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:62%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:42px">62.0%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:90.1%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:42px">90.1%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-28.1%</td>
+    </tr><tr style="border-top:2px solid #d0d8e4;background:#f7f9fc">
+    <td style="padding:9px 10px;color:#1a2332;font-weight:700">总核对率</td>
+    <td style="padding:9px 10px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+        <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+          <div style="width:52.04%;height:100%;background:#1565c0;border-radius:3px"></div>
+        </div>
+        <span style="color:#1565c0;font-weight:700;min-width:42px">52.04%</span>
+      </div>
+    </td>
+    <td style="padding:9px 10px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+        <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+          <div style="width:88.3%;height:100%;background:rgba(46,125,50,0.55);border-radius:3px"></div>
+        </div>
+        <span style="color:#4a5568;font-weight:600;min-width:42px">88.3%</span>
+      </div>
+    </td>
+    <td style="padding:9px 10px;text-align:center;color:#d32f2f;font-weight:700;font-size:13px">-36.3%</td>
+  </tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:24px">
+    <div class="chart-card-title">主要问题归因</div>
+    <div style="padding:4px 8px" id="issueItems"><div class="issue-item red"><div class="issue-dot red"></div><div class="issue-text"><strong>需求挖掘仍是最短板：</strong>92条会话中仅 15 条涉及需求挖掘（涉及率 16%），有效均分 6.53，较总部低 1.10 分。较上期有所回升（+2.03）。大部分会话未触发该维度，涉及会话中客服多未进行铺垫即直接推荐报价。</div></div><div class="issue-item amber"><div class="issue-dot amber"></div><div class="issue-text"><strong>尺寸核对大幅下滑：</strong>总核对率 32.4%（22/68），较总部低 49.4%。较上期（43.1%）下滑 10.7%，已看好款式却未发送尺寸图的情况反复出现。</div></div><div class="issue-item amber"><div class="issue-dot amber"></div><div class="issue-text"><strong>网点核对严重不足：</strong>总核对率仅 62.0%（31/50），远低于总部 90.1%。较上期有改善（+7.5%），需作为重点整改方向。</div></div><div class="issue-item blue"><div class="issue-dot blue"></div><div class="issue-text"><strong>气源核对率持续偏低：</strong>总核对率 56.8%，较总部低 29.5%。较上期改善+7.6%，部分会话未询问气源情况即跳过核对。</div></div></div>
+  </div>
+
+  <div class="section-title">本期 vs 上期综合对比</div>
+  <div style="background:#ffffff;border:1px solid #e0e5ec;border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:13px;color:#3a4a5c;line-height:1.8">7月综合得分较6月微升（6.84→6.89，+0.05），其中跟进维护（6.78→7.00）与服务态度（6.99→7.01）稳步改善，但需求挖掘由4.75回落至4.50、推荐介绍由6.87降至6.60，是拉低综合得分的主因。基础四项核对率整体持平微降（56.6%→56.5%），结构分化明显：网点核对36.4%→55.4%显著改善，尺寸40.0%→42.4%显著改善，新换装80.3%→74.7%下滑，气源53.5%→49.2%下滑，与总部差距依旧悬殊。评分维度改善与部分核对项恶化并存，需持续盯防漏核对。</div>
+  <div class="charts-row-2" style="margin-bottom:24px">
+    <div class="chart-card">
+      <div class="chart-card-title">整体评分环比 <span>本期 vs 上期 vs 总部得分</span></div>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="trendScoreChart" width="835" height="390" style="display: block; box-sizing: border-box; height: 260px; width: 556px;"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">整体核对率环比 <span>本期 vs 上期 vs 总部核对率</span></div>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="trendRateChart" width="835" height="390" style="display: block; box-sizing: border-box; height: 260px; width: 556px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">客服综合汇总</div>
+  <div class="table-card">
+    <div class="table-toolbar">
+      <div class="chart-card-title" style="margin-bottom:0">客服综合汇总表</div>
+      <span class="threshold-note">综合分 ≥7.0 优秀 / 6.0–6.9 良好 / &lt;6.0 待提升 &nbsp;|&nbsp; 核对率 ≥80% ✅ / 60–79% ⚠️ / &lt;60% ❌</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>客服</th>
+            <th>会话数</th>
+            <th>服务态度</th>
+            <th>需求挖掘</th>
+            <th>推荐介绍</th>
+            <th>跟进维护</th>
+            <th>综合得分</th>
+            <th>新换装率</th>
+            <th>尺寸核对率</th>
+            <th>气源核对率</th>
+            <th>网点核对率</th>
+            <th>总核对率</th>
+          </tr>
+        </thead>
+        <tbody id="summaryBody"><tr style="">
+      <td><strong style="color:#1a2332">小安</strong></td>
+      <td style="text-align:center;color:#6b7a8d">15</td>
+      <td><span class="score-pill score-high">7.00</span></td>
+      <td><span style="color:#8a96a5">—</span></td>
+      <td><span class="score-pill score-mid">6.33</span></td>
+      <td><span class="score-pill score-high">7.00</span></td>
+      <td><span class="score-pill score-mid">6.89</span></td>
+      <td><span class="score-pill score-low">❌ 43%</span></td>
+      <td><span class="score-pill score-low">❌ 22%</span></td>
+      <td><span class="score-pill score-low">❌ 50%</span></td>
+      <td><span class="score-pill score-high">✅ 83%</span></td>
+      <td><span class="score-pill score-low">❌ 47%</span></td>
+    </tr><tr style="">
+      <td><strong style="color:#1a2332">杨鑫</strong></td>
+      <td style="text-align:center;color:#6b7a8d">15</td>
+      <td><span class="score-pill score-high">7.00</span></td>
+      <td><span class="score-pill score-mid">6.00</span></td>
+      <td><span class="score-pill score-mid">6.33</span></td>
+      <td><span class="score-pill score-mid">6.87</span></td>
+      <td><span class="score-pill score-mid">6.81</span></td>
+      <td><span class="score-pill score-low">❌ 50%</span></td>
+      <td><span class="score-pill score-low">❌ 50%</span></td>
+      <td><span class="score-pill score-mid">⚠️ 69%</span></td>
+      <td><span class="score-pill score-low">❌ 33%</span></td>
+      <td><span class="score-pill score-low">❌ 52%</span></td>
+    </tr><tr style="">
+      <td><strong style="color:#1a2332">黄兴</strong></td>
+      <td style="text-align:center;color:#6b7a8d">15</td>
+      <td><span class="score-pill score-high">7.00</span></td>
+      <td><span class="score-pill score-mid">6.60</span></td>
+      <td><span class="score-pill score-mid">6.50</span></td>
+      <td><span class="score-pill score-mid">6.53</span></td>
+      <td><span class="score-pill score-mid">6.79</span></td>
+      <td><span class="score-pill score-mid">⚠️ 70%</span></td>
+      <td><span class="score-pill score-low">❌ 23%</span></td>
+      <td><span class="score-pill score-low">❌ 25%</span></td>
+      <td><span class="score-pill score-low">❌ 57%</span></td>
+      <td><span class="score-pill score-low">❌ 40%</span></td>
+    </tr><tr style="">
+      <td><strong style="color:#1a2332">肖用</strong></td>
+      <td style="text-align:center;color:#6b7a8d">16</td>
+      <td><span class="score-pill score-mid">6.75</span></td>
+      <td><span class="score-pill score-high">7.00</span></td>
+      <td><span class="score-pill score-mid">6.50</span></td>
+      <td><span class="score-pill score-high">7.00</span></td>
+      <td><span class="score-pill score-mid">6.78</span></td>
+      <td><span class="score-pill score-mid">⚠️ 69%</span></td>
+      <td><span class="score-pill score-low">❌ 31%</span></td>
+      <td><span class="score-pill score-low">❌ 54%</span></td>
+      <td><span class="score-pill score-low">❌ 38%</span></td>
+      <td><span class="score-pill score-low">❌ 49%</span></td>
+    </tr><tr style="">
+      <td><strong style="color:#1a2332">文强</strong></td>
+      <td style="text-align:center;color:#6b7a8d">16</td>
+      <td><span class="score-pill score-high">7.00</span></td>
+      <td><span class="score-pill score-mid">6.00</span></td>
+      <td><span class="score-pill score-mid">6.38</span></td>
+      <td><span class="score-pill score-mid">6.56</span></td>
+      <td><span class="score-pill score-mid">6.72</span></td>
+      <td><span class="score-pill score-low">❌ 47%</span></td>
+      <td><span class="score-pill score-low">❌ 27%</span></td>
+      <td><span class="score-pill score-high">✅ 80%</span></td>
+      <td><span class="score-pill score-high">✅ 89%</span></td>
+      <td><span class="score-pill score-low">❌ 58%</span></td>
+    </tr><tr style="">
+      <td><strong style="color:#1a2332">小琳</strong></td>
+      <td style="text-align:center;color:#6b7a8d">15</td>
+      <td><span class="score-pill score-mid">6.93</span></td>
+      <td><span class="score-pill score-high">7.00</span></td>
+      <td><span class="score-pill score-mid">6.11</span></td>
+      <td><span class="score-pill score-mid">6.40</span></td>
+      <td><span class="score-pill score-mid">6.61</span></td>
+      <td><span class="score-pill score-mid">⚠️ 77%</span></td>
+      <td><span class="score-pill score-low">❌ 42%</span></td>
+      <td><span class="score-pill score-mid">⚠️ 67%</span></td>
+      <td><span class="score-pill score-mid">⚠️ 73%</span></td>
+      <td><span class="score-pill score-mid">⚠️ 65%</span></td>
+    </tr><tr style="border-top:2px solid #2979ff;background:rgba(41,121,255,0.07)">
+      <td><strong style="color:#1976d2">整体均值</strong></td>
+      <td style="text-align:center;color:#6b7a8d">92</td>
+      <td><span class="score-pill score-mid">6.95</span></td>
+      <td><span class="score-pill score-mid">6.53</span></td>
+      <td><span class="score-pill score-mid">6.36</span></td>
+      <td><span class="score-pill score-mid">6.73</span></td>
+      <td><span class="score-pill score-mid">6.77</span></td>
+      <td><span class="score-pill score-low">❌ 58%</span></td>
+      <td><span class="score-pill score-low">❌ 32%</span></td>
+      <td><span class="score-pill score-low">❌ 57%</span></td>
+      <td><span class="score-pill score-mid">⚠️ 62%</span></td>
+      <td><span class="score-pill score-low">❌ 52%</span></td>
+    </tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">评分及核对率详情</div>
+  <div class="charts-row-2" style="margin-bottom:24px">
+    <div class="chart-card">
+      <div class="chart-card-title">会话得分细分项 <span>折线图</span></div>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="agentDimChart" width="835" height="390" style="display: block; box-sizing: border-box; height: 260px; width: 556px;"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">四项核对率对比 <span>折线图</span></div>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="followAllChart" width="835" height="390" style="display: block; box-sizing: border-box; height: 260px; width: 556px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">客服个人小结</div>
+  <div class="summary-grid" id="agentSummaryGrid"><div class="summary-card">
+      <div class="summary-card-header">
+        <div class="summary-rank rank-1">1</div>
+        <div class="summary-avatar" style="background:#2e7d32">小</div>
+        <div>
+          <div class="summary-name">小安</div>
+          <div class="summary-score">本期综合 6.89 分<br>上期 6.90 分 <span style="color:#c62828">▼ -0.00</span></div>
+        </div>
+      </div>
+      <div class="summary-tags"><span class="s-tag bad">尺寸核对22%</span><span class="s-tag warn">新换装43%</span><span class="s-tag good">跟进维护优秀</span></div>
+      <div class="summary-text">综合得分 6.89 分，较上期基本持平。<br>主要优势：服务态度稳定保持7分、跟进维护均分 7.00 表现突出。<br>主要待改进：新换装核对 43% 未达标、尺寸核对仅 22%，需加强相关核对规范。</div>
+    </div><div class="summary-card">
+      <div class="summary-card-header">
+        <div class="summary-rank rank-2">2</div>
+        <div class="summary-avatar" style="background:#7b1fa2">杨</div>
+        <div>
+          <div class="summary-name">杨鑫</div>
+          <div class="summary-score">本期综合 6.81 分<br>上期 6.97 分 <span style="color:#c62828">▼ -0.16</span></div>
+        </div>
+      </div>
+      <div class="summary-tags"><span class="s-tag warn">新换装50%</span></div>
+      <div class="summary-text">综合得分 6.81 分，较上期下滑 0.16 分。<br>主要优势：服务态度稳定保持7分、需求挖掘均分 6 团队领先、气源核对率 69% 团队领先。<br>主要待改进：新换装核对 50% 未达标、网点核对仅 33%，需加强相关核对规范。</div>
+    </div><div class="summary-card">
+      <div class="summary-card-header">
+        <div class="summary-rank rank-3">3</div>
+        <div class="summary-avatar" style="background:#c2185b">黄</div>
+        <div>
+          <div class="summary-name">黄兴</div>
+          <div class="summary-score">本期综合 6.79 分<br>上期 6.95 分 <span style="color:#c62828">▼ -0.16</span></div>
+        </div>
+      </div>
+      <div class="summary-tags"><span class="s-tag bad">尺寸核对23%</span><span class="s-tag bad">气源核对25%</span></div>
+      <div class="summary-text">综合得分 6.79 分，较上期下滑 0.16 分。<br>主要优势：服务态度稳定保持7分、需求挖掘均分 7 团队领先。<br>主要待改进：新换装核对 70% 未达标、尺寸核对仅 23%、气源核对仅 25%，需加强相关核对规范。</div>
+    </div><div class="summary-card">
+      <div class="summary-card-header">
+        <div class="summary-rank rank-other">4</div>
+        <div class="summary-avatar" style="background:#1976d2">肖</div>
+        <div>
+          <div class="summary-name">肖用</div>
+          <div class="summary-score">本期综合 6.78 分<br>上期 6.76 分 <span style="color:#2e7d32">▲ +0.02</span></div>
+        </div>
+      </div>
+      <div class="summary-tags"><span class="s-tag bad">尺寸核对31%</span><span class="s-tag warn">新换装69%</span><span class="s-tag good">跟进维护优秀</span></div>
+      <div class="summary-text">综合得分 6.78 分，较上期基本持平。<br>主要优势：跟进维护均分 7.00 表现突出、需求挖掘均分 7 团队领先。<br>主要待改进：新换装核对 69% 未达标、尺寸核对仅 31%、网点核对仅 38%，需加强相关核对规范。</div>
+    </div><div class="summary-card">
+      <div class="summary-card-header">
+        <div class="summary-rank rank-other">5</div>
+        <div class="summary-avatar" style="background:#00838f">文</div>
+        <div>
+          <div class="summary-name">文强</div>
+          <div class="summary-score">本期综合 6.72 分<br>上期 6.91 分 <span style="color:#c62828">▼ -0.19</span></div>
+        </div>
+      </div>
+      <div class="summary-tags"><span class="s-tag bad">尺寸核对27%</span><span class="s-tag warn">新换装47%</span></div>
+      <div class="summary-text">综合得分 6.72 分，较上期下滑 0.19 分。<br>主要优势：服务态度稳定保持7分、需求挖掘均分 6 团队领先、气源核对率 80% 团队领先。<br>主要待改进：新换装核对 47% 未达标、尺寸核对仅 27%，需加强相关核对规范。</div>
+    </div><div class="summary-card">
+      <div class="summary-card-header">
+        <div class="summary-rank rank-other">6</div>
+        <div class="summary-avatar" style="background:#e65100">小</div>
+        <div>
+          <div class="summary-name">小琳</div>
+          <div class="summary-score">本期综合 6.61 分<br>上期 6.84 分 <span style="color:#c62828">▼ -0.23</span></div>
+        </div>
+      </div>
+      <div class="summary-tags"><span class="s-tag warn">新换装77%</span><span class="s-tag warn">跟进维护6.4分</span></div>
+      <div class="summary-text">综合得分 6.61 分，较上期下滑 0.23 分。<br>主要优势：需求挖掘均分 7 团队领先、气源核对率 67% 团队领先。<br>主要待改进：新换装核对 77% 未达标、尺寸核对仅 42%、跟进维护仅 6.40 分，需加强相关核对规范。</div>
+    </div></div>
+
+</div>
+
+<script>
+// The exported source already contains the last rendered rows/cards. Clear only
+// containers that the original page rebuilds by appending, so reopening the
+// dashboard produces the same single copy as the source page.
+['scoreGapBody', 'followGapBody', 'summaryBody', 'agentSummaryGrid'].forEach((id) => {
+  const element = document.getElementById(id);
+  if (element) element.innerHTML = '';
+});
+// =================== 原始数据 ===================
+const RAW = [{"idx": 1, "time": "2026-08-27 22:58:59", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 2, "time": "2026-08-27 22:19:34", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 3, "time": "2026-08-27 21:58:23", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "无效", "status_size": "已核对", "status_power": "未核对", "status_address": "已核对", "remark": ""}, {"idx": 4, "time": "2026-08-27 15:52:18", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "无效", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 5, "time": "2026-08-27 12:39:24", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "无效", "status_address": "已核对", "remark": ""}, {"idx": 6, "time": "2026-08-27 12:28:10", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "已核对", "status_size": "已核对", "status_power": "无效", "status_address": "已核对", "remark": ""}, {"idx": 7, "time": "2026-08-26 23:15:05", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 8, "time": "2026-08-26 21:47:53", "agent": "梁肖用", "score_attitude": 7, "score_professional": 7, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 9, "time": "2026-08-26 19:42:53", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 10, "time": "2026-08-26 16:40:38", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "无效", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 11, "time": "2026-08-26 15:45:20", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 6, "score_total": 6.5, "status_install": "已核对", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 12, "time": "2026-08-26 15:41:04", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "已核对", "remark": ""}, {"idx": 13, "time": "2026-08-26 13:21:25", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "已核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 14, "time": "2026-08-26 11:51:38", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "无效", "status_size": "无效", "status_power": "无效", "status_address": "已核对", "remark": ""}, {"idx": 15, "time": "2026-08-26 11:03:36", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "已核对", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 16, "time": "2026-08-26 11:01:24", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "无效", "status_size": "未核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 17, "time": "2026-08-26 10:12:03", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "无效", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 18, "time": "2026-08-25 23:03:37", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "无效", "status_power": "未核对", "status_address": "已核对", "remark": ""}, {"idx": 19, "time": "2026-08-25 22:19:31", "agent": "黄兴", "score_attitude": 7, "score_professional": 8, "score_speech": 7.5, "score_service": 7, "score_total": 7.35, "status_install": "无效", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 20, "time": "2026-08-25 17:25:26", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "无效", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 21, "time": "2026-08-25 17:21:55", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "无效", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 22, "time": "2026-08-25 17:04:24", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 23, "time": "2026-08-25 16:17:19", "agent": "黄兴", "score_attitude": 7, "score_professional": 6, "score_speech": 6, "score_service": 0, "score_total": 5.1, "status_install": "无效", "status_size": "未核对", "status_power": "未核对", "status_address": "已核对", "remark": ""}, {"idx": 24, "time": "2026-08-25 15:44:05", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "已核对", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 25, "time": "2026-08-25 15:41:28", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 26, "time": "2026-08-25 11:35:24", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 27, "time": "2026-08-25 10:00:42", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 28, "time": "2026-08-24 23:20:01", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 29, "time": "2026-08-24 22:06:35", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 30, "time": "2026-08-24 17:53:27", "agent": "周文强", "score_attitude": 7, "score_professional": 6, "score_speech": 6, "score_service": 7, "score_total": 6.5, "status_install": "已核对", "status_size": "无效", "status_power": "无效", "status_address": "已核对", "remark": ""}, {"idx": 31, "time": "2026-08-24 17:52:13", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 32, "time": "2026-08-24 17:12:35", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 33, "time": "2026-08-24 16:57:42", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 34, "time": "2026-08-24 16:28:15", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "无效", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 35, "time": "2026-08-24 15:52:01", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "已核对", "status_size": "未核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 36, "time": "2026-08-24 15:35:03", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 37, "time": "2026-08-24 15:00:22", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "已核对", "remark": ""}, {"idx": 38, "time": "2026-08-24 13:18:32", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "未核对", "status_address": "已核对", "remark": ""}, {"idx": 39, "time": "2026-08-24 11:36:26", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 40, "time": "2026-08-23 22:36:45", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "无效", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 41, "time": "2026-08-23 21:21:27", "agent": "梁肖用", "score_attitude": 3, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 5.0, "status_install": "无效", "status_size": "无效", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 42, "time": "2026-08-23 21:17:55", "agent": "梁肖用", "score_attitude": 7, "score_professional": 7, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "无效", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 43, "time": "2026-08-23 19:16:18", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 44, "time": "2026-08-23 16:12:39", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 6, "score_total": 6.5, "status_install": "无效", "status_size": "已核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 45, "time": "2026-08-23 14:50:11", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 46, "time": "2026-08-23 13:36:03", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 47, "time": "2026-08-23 13:21:47", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 48, "time": "2026-08-23 12:41:06", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 49, "time": "2026-08-23 12:20:53", "agent": "邓树林", "score_attitude": 6, "score_professional": 7, "score_speech": 6, "score_service": 5, "score_total": 6.0, "status_install": "无效", "status_size": "无效", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 50, "time": "2026-08-23 11:42:02", "agent": "邓树林", "score_attitude": 7, "score_professional": 7, "score_speech": 6, "score_service": 7, "score_total": 6.7, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 51, "time": "2026-08-22 23:48:42", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 52, "time": "2026-08-22 21:59:54", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "无效", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 53, "time": "2026-08-22 21:49:42", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "无效", "status_size": "未核对", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 54, "time": "2026-08-22 20:29:36", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 55, "time": "2026-08-22 17:46:02", "agent": "周文强", "score_attitude": 7, "score_professional": 6, "score_speech": 7, "score_service": 7, "score_total": 6.8, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 56, "time": "2026-08-22 13:59:45", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "无效", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 57, "time": "2026-08-22 12:24:11", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 0, "score_total": 4.5, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 58, "time": "2026-08-22 12:03:54", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "无效", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 59, "time": "2026-08-22 11:39:05", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 60, "time": "2026-08-22 10:41:43", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "无效", "status_size": "无效", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 61, "time": "2026-08-22 09:56:02", "agent": "邓树林", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 62, "time": "2026-08-21 19:56:53", "agent": "杨鑫", "score_attitude": 7, "score_professional": 6, "score_speech": 6, "score_service": 7, "score_total": 6.5, "status_install": "无效", "status_size": "无效", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 63, "time": "2026-08-21 17:09:55", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "未核对", "status_size": "无效", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 64, "time": "2026-08-21 16:36:35", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "无效", "status_address": "已核对", "remark": ""}, {"idx": 65, "time": "2026-08-21 16:35:50", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 66, "time": "2026-08-21 12:03:52", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "无效", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 67, "time": "2026-08-21 11:19:37", "agent": "梁肖用", "score_attitude": 7, "score_professional": 7, "score_speech": 6, "score_service": 7, "score_total": 6.7, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 68, "time": "2026-08-21 10:56:09", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "已核对", "status_size": "无效", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 69, "time": "2026-08-21 10:22:45", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "已核对", "status_size": "无效", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 70, "time": "2026-08-21 08:58:57", "agent": "梁肖用", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "已核对", "status_size": "已核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 71, "time": "2026-08-20 22:59:05", "agent": "杨鑫", "score_attitude": 7, "score_professional": 6, "score_speech": 6, "score_service": 7, "score_total": 6.5, "status_install": "未核对", "status_size": "无效", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 72, "time": "2026-08-20 15:18:04", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 73, "time": "2026-08-20 13:00:35", "agent": "黄兴", "score_attitude": 7, "score_professional": 6, "score_speech": 6, "score_service": 7, "score_total": 6.5, "status_install": "已核对", "status_size": "无效", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 74, "time": "2026-08-20 11:22:58", "agent": "黄兴", "score_attitude": 7, "score_professional": 6, "score_speech": 6, "score_service": 7, "score_total": 6.5, "status_install": "无效", "status_size": "已核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 75, "time": "2026-08-20 09:02:15", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 76, "time": "2026-08-19 16:52:08", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 77, "time": "2026-08-19 16:31:57", "agent": "黄大安", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 78, "time": "2026-08-19 13:00:18", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 79, "time": "2026-08-18 13:23:03", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "无效", "status_address": "未核对", "remark": ""}, {"idx": 80, "time": "2026-08-18 11:18:23", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 81, "time": "2026-08-18 10:07:40", "agent": "黄兴", "score_attitude": 7, "score_professional": 7, "score_speech": 7.5, "score_service": 7, "score_total": 7.15, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "已核对", "remark": ""}, {"idx": 82, "time": "2026-08-17 23:49:11", "agent": "杨鑫", "score_attitude": 7, "score_professional": 6, "score_speech": 6, "score_service": 7, "score_total": 6.5, "status_install": "已核对", "status_size": "无效", "status_power": "未核对", "status_address": "无效", "remark": ""}, {"idx": 83, "time": "2026-08-17 17:59:10", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "未核对", "status_size": "未核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 84, "time": "2026-08-17 17:47:47", "agent": "杨鑫", "score_attitude": 7, "score_professional": null, "score_speech": 7, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "已核对", "status_address": "未核对", "remark": ""}, {"idx": 85, "time": "2026-08-17 11:23:29", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 86, "time": "2026-08-16 14:02:54", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 7, "score_total": 6.6, "status_install": "未核对", "status_size": "无效", "status_power": "已核对", "status_address": "已核对", "remark": ""}, {"idx": 87, "time": "2026-08-16 13:31:25", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "已核对", "status_power": "无效", "status_address": "无效", "remark": ""}, {"idx": 88, "time": "2026-08-16 12:49:37", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "无效", "status_power": "无效", "status_address": "已核对", "remark": ""}, {"idx": 89, "time": "2026-08-16 12:27:29", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": 6, "score_service": 0, "score_total": 4.5, "status_install": "未核对", "status_size": "未核对", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 90, "time": "2026-08-16 11:44:22", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "无效", "remark": ""}, {"idx": 91, "time": "2026-08-16 11:35:30", "agent": "周文强", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "未核对", "status_address": "未核对", "remark": ""}, {"idx": 92, "time": "2026-08-16 08:35:15", "agent": "黄兴", "score_attitude": 7, "score_professional": null, "score_speech": null, "score_service": 7, "score_total": 7.0, "status_install": "已核对", "status_size": "未核对", "status_power": "已核对", "status_address": "无效", "remark": ""}];
+
+// =================== 辅助函数 ===================
+function avg(arr) {
+  const valid = arr.filter(v => v !== null && v !== undefined && !isNaN(v));
+  if (!valid.length) return null;
+  return valid.reduce((a,b) => a+b, 0) / valid.length;
+}
+
+function followRate(arr, key) {
+  const valid = arr.filter(d => d[key] === '已核对' || d[key] === '未核对');
+  if (valid.length === 0) return 0;
+  const done = valid.filter(d => d[key] === '已核对');
+  return done.length / valid.length;
+}
+
+// =================== 8月代理商数据 ===================
+const AGENTS = ['梁肖用','黄大安','邓树林','杨鑫','周文强','黄兴'];
+const AGENT_ALIAS = {'梁肖用':'肖用','黄大安':'小安','邓树林':'小琳','杨鑫':'杨鑫','周文强':'文强','黄兴':'黄兴'};
+const AGENT_COLORS = ['#1976d2','#2e7d32','#e65100','#7b1fa2','#00838f','#c2185b'];
+
+const agentStats = AGENTS.map((name, i) => {
+  const rows = RAW.filter(d => d.agent === name);
+  return {
+    name, alias: AGENT_ALIAS[name], color: AGENT_COLORS[i],
+    count: rows.length,
+    avg_total: avg(rows.map(d => d.score_total)),
+    avg_attitude: avg(rows.map(d => d.score_attitude)),
+    avg_professional: avg(rows.map(d => d.score_professional)),
+    avg_speech: avg(rows.map(d => d.score_speech)),
+    avg_service: avg(rows.map(d => d.score_service)),
+    rate_install: followRate(rows, 'status_install'),
+    rate_size: followRate(rows, 'status_size'),
+    rate_power: followRate(rows, 'status_power'),
+    rate_address: followRate(rows, 'status_address'),
+    rate_total: (() => {
+      const keys = ['status_install','status_size','status_power','status_address'];
+      let done = 0, valid = 0;
+      keys.forEach(k => {
+        const v = rows.filter(d => d[k] === '已核对' || d[k] === '未核对');
+        done += v.filter(d => d[k] === '已核对').length;
+        valid += v.length;
+      });
+      return valid ? done / valid : 0;
+    })(),
+  };
+});
+
+// 整体代理商数据
+const allTotal = avg(RAW.map(d => d.score_total));
+const allAttitude = avg(RAW.map(d => d.score_attitude));
+const allProfessional = avg(RAW.map(d => d.score_professional));
+const allSpeech = avg(RAW.map(d => d.score_speech));
+const allService = avg(RAW.map(d => d.score_service));
+const allRateInstall = followRate(RAW, 'status_install');
+const allRateSize = followRate(RAW, 'status_size');
+const allRatePower = followRate(RAW, 'status_power');
+const allRateAddress = followRate(RAW, 'status_address');
+
+const totalRateKeys = ['status_install','status_size','status_power','status_address'];
+let totalDoneAll = 0, totalValidAll = 0;
+totalRateKeys.forEach(k => {
+  const v = RAW.filter(d => d[k] === '已核对' || d[k] === '未核对');
+  totalDoneAll += v.filter(d => d[k] === '已核对').length;
+  totalValidAll += v.length;
+});
+const totalRateCur = +(totalDoneAll / totalValidAll * 100).toFixed(2);
+
+// =================== 总部基准数据 ===================
+const HQ_SCORE = {"total": 7.15, "attitude": 6.995, "professional": 7.63, "speech": 7.18, "service": 7.22};
+const HQ_RATE = {"install": 93.1, "size": 81.8, "power": 86.3, "address": 90.1, "total": 88.3};
+
+// =================== 上期数据（7月终稿） ===================
+const LAST_PERIOD = {
+  "overall": {
+    "total": 6.888,
+    "attitude": 7.011,
+    "professional": 4.5,
+    "speech": 6.608,
+    "service": 6.989,
+    "rate_install": 73.4,
+    "rate_size": 43.1,
+    "rate_power": 49.2,
+    "rate_address": 54.5,
+    "rate_total": 56.2
+  },
+  "agents": {
+    "邓树林": {
+      "total": 6.843,
+      "attitude": 7,
+      "professional": 3,
+      "speech": 6.688,
+      "service": 7.033,
+      "rate_install": 78.6,
+      "rate_size": 36.4,
+      "rate_power": 72.7,
+      "rate_address": 75.0,
+      "rate_total": 65.9
+    },
+    "黄大安": {
+      "total": 6.897,
+      "attitude": 7,
+      "professional": 6,
+      "speech": 6.2,
+      "service": 7.033,
+      "rate_install": 69.2,
+      "rate_size": 27.3,
+      "rate_power": 33.3,
+      "rate_address": 75.0,
+      "rate_total": 51.2
+    },
+    "杨鑫": {
+      "total": 6.967,
+      "attitude": 7,
+      "professional": 6,
+      "speech": 6.75,
+      "service": 7,
+      "rate_install": 58.3,
+      "rate_size": 20.0,
+      "rate_power": 38.5,
+      "rate_address": 16.7,
+      "rate_total": 36.6
+    },
+    "梁肖用": {
+      "total": 6.76,
+      "attitude": 7,
+      "professional": 0,
+      "speech": 6.5,
+      "service": 7,
+      "rate_install": 71.4,
+      "rate_size": 57.1,
+      "rate_power": 83.3,
+      "rate_address": 45.5,
+      "rate_total": 62.2
+    },
+    "周文强": {
+      "total": 6.912,
+      "attitude": 7.062,
+      "professional": null,
+      "speech": 6.5,
+      "service": 6.938,
+      "rate_install": 64.3,
+      "rate_size": 50.0,
+      "rate_power": 33.3,
+      "rate_address": 53.8,
+      "rate_total": 51.0
+    },
+    "黄兴": {
+      "total": 6.95,
+      "attitude": 7,
+      "professional": 7,
+      "speech": 6.875,
+      "service": 6.929,
+      "rate_install": 100,
+      "rate_size": 66.7,
+      "rate_power": 50.0,
+      "rate_address": 55.6,
+      "rate_total": 70.0
+    }
+  }
+};
+
+// =================== KPI 卡片 ===================
+function buildKpiCards() {
+  const grid = document.getElementById('kpiGrid');
+  
+  // Row1 Col1: 总会话数（跨两行）
+  let html = `<div class="kpi-card blue span-2rows" style="grid-column:1">
+    <div class="kpi-label">总会话数</div>
+    <div class="kpi-value blue" style="font-size:32px">${RAW.length}</div>
+    <div class="kpi-sub">8月全月抽检（上期90条）</div>
+  </div>`;
+  
+  // 得分卡片
+  const scoreCards = [
+    { label: '综合平均得分', cur: allTotal, hq: HQ_SCORE.total, last: LAST_PERIOD.overall.total, color: 'amber', col: 2, row: 1 },
+    { label: '服务态度均分', cur: allAttitude, hq: HQ_SCORE.attitude, last: LAST_PERIOD.overall.attitude, color: 'green', col: 3, row: 1 },
+    { label: '需求挖掘均分', cur: allProfessional, hq: HQ_SCORE.professional, last: LAST_PERIOD.overall.professional, color: 'red', col: 4, row: 1 },
+    { label: '推荐介绍均分', cur: allSpeech, hq: HQ_SCORE.speech, last: LAST_PERIOD.overall.speech, color: 'purple', col: 5, row: 1 },
+    { label: '跟进维护均分', cur: allService, hq: HQ_SCORE.service, last: LAST_PERIOD.overall.service, color: 'teal', col: 6, row: 1 },
+  ];
+  
+  scoreCards.forEach(c => {
+    const diffHq = c.cur - c.hq;
+    const diffLast = c.cur - c.last;
+    const hqArrow = diffHq >= 0 ? '▲' : '▼';
+    const lastArrow = diffLast >= 0 ? '▲' : '▼';
+    const hqCls = diffHq >= 0 ? 'pos' : 'neg';
+    const lastCls = diffLast >= 0 ? 'pos' : 'neg';
+    const hqText = diffHq === 0 ? `与总部持平 (${c.hq.toFixed(2)})` : `vs 总部 ${hqArrow} ${Math.abs(diffHq).toFixed(2)}`;
+    const lastText = diffLast === 0 ? `环比上期持平 (${c.last.toFixed(2)})` : `环比上期 ${lastArrow} ${Math.abs(diffLast).toFixed(2)}`;
+    const warnIcon = (c.label === '需求挖掘均分' && diffHq < -1) ? ' ⚠️' : '';
+    html += `<div class="kpi-card ${c.color}" style="grid-column:${c.col};grid-row:${c.row}">
+      <div class="kpi-label">${c.label}</div>
+      <div class="kpi-value ${c.color}">${c.cur.toFixed(2)}</div>
+      <div class="kpi-delta ${hqCls}">${hqText}${warnIcon}</div>
+      <div class="kpi-delta ${lastCls}">${lastText}</div>
+    </div>`;
+  });
+  
+  // Row2: 核对率卡片
+  const rateCards = [
+    { label: '总核对率', cur: totalRateCur, hq: HQ_RATE.total, last: LAST_PERIOD.overall.rate_total, color: 'blue', col: 2 },
+    { label: '新换装率', cur: allRateInstall*100, hq: HQ_RATE.install, last: LAST_PERIOD.overall.rate_install, color: 'green', col: 3 },
+    { label: '尺寸核对率', cur: allRateSize*100, hq: HQ_RATE.size, last: LAST_PERIOD.overall.rate_size, color: 'amber', col: 4 },
+    { label: '气源核对率', cur: allRatePower*100, hq: HQ_RATE.power, last: LAST_PERIOD.overall.rate_power, color: 'purple', col: 5 },
+    { label: '网点核对率', cur: allRateAddress*100, hq: HQ_RATE.address, last: LAST_PERIOD.overall.rate_address, color: 'red', col: 6 },
+  ];
+  
+  rateCards.forEach(c => {
+    const diffHq = c.cur - c.hq;
+    const diffLast = c.cur - c.last;
+    const hqArrow = diffHq >= 0 ? '▲' : '▼';
+    const lastArrow = diffLast >= 0 ? '▲' : '▼';
+    const hqCls = diffHq >= 0 ? 'pos' : 'neg';
+    const lastCls = diffLast >= 0 ? 'pos' : 'neg';
+    // 动态状态色：低于60%红色，60-80%黄色
+    let statusColor = c.color;
+    if (c.cur < 60) statusColor = 'red';
+    else if (c.cur < 80) statusColor = 'amber';
+    const hqText = diffHq === 0 ? `与总部持平 (${c.hq.toFixed(1)}%)` : `vs 总部 ${hqArrow} ${Math.abs(diffHq).toFixed(1)} 个百分点`;
+    const lastText = diffLast === 0 ? `环比上期持平 (${c.last.toFixed(1)}%)` : `环比上期 ${lastArrow} ${Math.abs(diffLast).toFixed(1)} 个百分点`;
+    html += `<div class="kpi-card ${statusColor}" style="grid-column:${c.col};grid-row:2">
+      <div class="kpi-label">${c.label}</div>
+      <div class="kpi-value ${statusColor}">${c.cur.toFixed(1)}%</div>
+      <div class="kpi-delta ${hqCls}">${hqText}</div>
+      <div class="kpi-delta ${lastCls}">${lastText}</div>
+    </div>`;
+  });
+  
+  grid.innerHTML = html;
+}
+
+// =================== 雷达图 ===================
+function buildRadarCharts() {
+  // 得分雷达
+  new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
+    data: {
+      labels: ['服务态度','需求挖掘','推荐介绍','跟进维护'],
+      datasets: [
+        { label:'本次均分', data: [+allAttitude.toFixed(2), +allProfessional.toFixed(2), +allSpeech.toFixed(2), +allService.toFixed(2)],
+          backgroundColor:'rgba(25,118,210,0.15)', borderColor:'#1976d2', pointBackgroundColor:'#1976d2', pointRadius:4, borderWidth:2 },
+        { label:'总部得分', data: [HQ_SCORE.attitude, HQ_SCORE.professional, HQ_SCORE.speech, HQ_SCORE.service],
+          backgroundColor:'rgba(46,125,50,0.08)', borderColor:'rgba(46,125,50,0.5)', borderDash:[4,3], pointBackgroundColor:'rgba(46,125,50,0.5)', pointRadius:3, borderWidth:1.5 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#6b7a8d', font:{size:11}, boxWidth:12 } } },
+      scales: { r: {
+        min: 0, max: 10,
+        ticks: { color: '#8a96a5', font:{size:10}, backdropColor: 'transparent', stepSize: 2 },
+        grid: { color: '#e0e5ec' },
+        pointLabels: { color: '#3a4a5c', font:{size:11} },
+        angleLines: { color: '#e0e5ec' }
+      }}
+    }
+  });
+
+  // 核对率雷达
+  new Chart(document.getElementById('followRadarChart'), {
+    type: 'radar',
+    data: {
+      labels: ['新换装', '尺寸核对', '气源核对', '网点核对'],
+      datasets: [
+        { label: '本次核对率', data: [+(allRateInstall*100).toFixed(1), +(allRateSize*100).toFixed(1), +(allRatePower*100).toFixed(1), +(allRateAddress*100).toFixed(1)],
+          backgroundColor:'rgba(25,118,210,0.15)', borderColor:'#1976d2', pointBackgroundColor:'#1976d2', pointRadius:4, borderWidth:2 },
+        { label: '总部核对率', data: [HQ_RATE.install, HQ_RATE.size, HQ_RATE.power, HQ_RATE.address],
+          backgroundColor:'rgba(46,125,50,0.08)', borderColor:'rgba(46,125,50,0.5)', borderDash:[4,3], pointBackgroundColor:'rgba(46,125,50,0.5)', pointRadius:3, borderWidth:1.5 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#6b7a8d', font:{size:11}, boxWidth:12 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.r}%` } }
+      },
+      scales: { r: {
+        min: 0, max: 100,
+        ticks: { color: '#8a96a5', font:{size:9}, backdropColor: 'transparent', stepSize: 25, callback: v => v+'%' },
+        grid: { color: '#e0e5ec' },
+        pointLabels: { color: '#3a4a5c', font:{size:11} },
+        angleLines: { color: '#e0e5ec' }
+      }}
+    }
+  });
+}
+
+// =================== 差距分析表格 ===================
+function buildGapTables() {
+  const scorePct = (val) => Math.min(Math.max(val / 10 * 100, 0), 100);
+  
+  // 得分差距
+  const scoreItems = [
+    { label: '服务态度', actual: allAttitude, base: HQ_SCORE.attitude },
+    { label: '需求挖掘', actual: allProfessional, base: HQ_SCORE.professional },
+    { label: '推荐介绍', actual: allSpeech, base: HQ_SCORE.speech },
+    { label: '跟进维护', actual: allService, base: HQ_SCORE.service },
+  ];
+  const scoreGapBody = document.getElementById('scoreGapBody');
+  scoreItems.forEach(item => {
+    const diff = +(item.actual - item.base).toFixed(2);
+    const diffColor = diff >= 0 ? '#2e7d32' : '#d32f2f';
+    const diffSign = diff >= 0 ? '+' : '';
+    scoreGapBody.innerHTML += `<tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">${item.label}</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:${scorePct(item.actual)}%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:30px">${item.actual.toFixed(2)}</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:${scorePct(item.base)}%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:30px">${item.base.toFixed(2)}</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:${diffColor};font-weight:700;font-size:13px">${diffSign}${diff}</td>
+    </tr>`;
+  });
+  // 综合得分汇总行
+  const totalDiff = +(allTotal - HQ_SCORE.total).toFixed(2);
+  const totalDiffColor = totalDiff >= 0 ? '#2e7d32' : '#d32f2f';
+  const totalDiffSign = totalDiff >= 0 ? '+' : '';
+  scoreGapBody.innerHTML += `<tr style="border-top:2px solid #d0d8e4;background:#f7f9fc">
+    <td style="padding:9px 10px;color:#1a2332;font-weight:700">综合得分</td>
+    <td style="padding:9px 10px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+        <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+          <div style="width:${scorePct(allTotal)}%;height:100%;background:#1565c0;border-radius:3px"></div>
+        </div>
+        <span style="color:#1565c0;font-weight:700;min-width:30px">${allTotal.toFixed(2)}</span>
+      </div>
+    </td>
+    <td style="padding:9px 10px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+        <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+          <div style="width:${scorePct(HQ_SCORE.total)}%;height:100%;background:rgba(46,125,50,0.55);border-radius:3px"></div>
+        </div>
+        <span style="color:#4a5568;font-weight:600;min-width:30px">${HQ_SCORE.total.toFixed(2)}</span>
+      </div>
+    </td>
+    <td style="padding:9px 10px;text-align:center;color:${totalDiffColor};font-weight:700;font-size:13px">${totalDiffSign}${totalDiff}</td>
+  </tr>`;
+
+  // 核对率差距
+  const followItems = [
+    { label: '新换装', actual: allRateInstall*100, base: HQ_RATE.install },
+    { label: '尺寸核对', actual: allRateSize*100, base: HQ_RATE.size },
+    { label: '气源核对', actual: allRatePower*100, base: HQ_RATE.power },
+    { label: '网点核对', actual: allRateAddress*100, base: HQ_RATE.address },
+  ];
+  const followGapBody = document.getElementById('followGapBody');
+  followItems.forEach(item => {
+    const diff = +(item.actual - item.base).toFixed(1);
+    const diffColor = diff >= 0 ? '#2e7d32' : '#d32f2f';
+    const diffSign = diff >= 0 ? '+' : '';
+    const barW = Math.min(Math.max(item.actual, 0), 100);
+    const baseW = Math.min(Math.max(item.base, 0), 100);
+    followGapBody.innerHTML += `<tr style="border-bottom:1px solid #e8ecf1">
+      <td style="padding:9px 10px;color:#1a2332;font-weight:500">${item.label}</td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:${barW}%;height:100%;background:#1976d2;border-radius:3px"></div>
+          </div>
+          <span style="color:#1976d2;font-weight:600;min-width:42px">${item.actual.toFixed(1)}%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+            <div style="width:${baseW}%;height:100%;background:rgba(46,125,50,0.45);border-radius:3px"></div>
+          </div>
+          <span style="color:#6b7a8d;font-weight:500;min-width:42px">${item.base.toFixed(1)}%</span>
+        </div>
+      </td>
+      <td style="padding:9px 10px;text-align:center;color:${diffColor};font-weight:700;font-size:13px">${diffSign}${diff}%</td>
+    </tr>`;
+  });
+  // 总核对率汇总行
+  const totalR = totalRateCur;
+  const totalRBase = HQ_RATE.total;
+  const totalRDiff = +(totalR - totalRBase).toFixed(1);
+  const totalRDiffColor = totalRDiff >= 0 ? '#2e7d32' : '#d32f2f';
+  const totalRDiffSign = totalRDiff >= 0 ? '+' : '';
+  followGapBody.innerHTML += `<tr style="border-top:2px solid #d0d8e4;background:#f7f9fc">
+    <td style="padding:9px 10px;color:#1a2332;font-weight:700">总核对率</td>
+    <td style="padding:9px 10px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+        <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+          <div style="width:${Math.min(Math.max(totalR,0),100)}%;height:100%;background:#1565c0;border-radius:3px"></div>
+        </div>
+        <span style="color:#1565c0;font-weight:700;min-width:42px">${totalR}%</span>
+      </div>
+    </td>
+    <td style="padding:9px 10px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+        <div style="width:60px;height:6px;background:#e8ecf1;border-radius:3px;overflow:hidden">
+          <div style="width:${Math.min(Math.max(totalRBase,0),100)}%;height:100%;background:rgba(46,125,50,0.55);border-radius:3px"></div>
+        </div>
+        <span style="color:#4a5568;font-weight:600;min-width:42px">${totalRBase}%</span>
+      </div>
+    </td>
+    <td style="padding:9px 10px;text-align:center;color:${totalRDiffColor};font-weight:700;font-size:13px">${totalRDiffSign}${totalRDiff}%</td>
+  </tr>`;
+}
+
+// =================== 问题归因 ===================
+function buildIssues() {
+  const issues = [];
+  
+  // 需求挖掘
+  const profDiff = allProfessional - HQ_SCORE.professional;
+  const profLastDiff = allProfessional - LAST_PERIOD.overall.professional;
+  if (profDiff < -1) {
+    const involvedCount = RAW.filter(d => d.score_professional !== null).length;
+    issues.push({ cls: 'red', text: `<strong>需求挖掘仍是最短板：</strong>${RAW.length}条会话中仅 ${involvedCount} 条涉及需求挖掘（涉及率 ${(involvedCount/RAW.length*100).toFixed(0)}%），有效均分 ${allProfessional.toFixed(2)}，较总部低 ${Math.abs(profDiff).toFixed(2)} 分。${profLastDiff >= 0 ? '较上期有所回升（+' + profLastDiff.toFixed(2) + '）' : '较上期（' + LAST_PERIOD.overall.professional.toFixed(2) + '）继续下滑'}。大部分会话未触发该维度，涉及会话中客服多未进行铺垫即直接推荐报价。` });
+  }
+  
+  // 尺寸核对
+  const sizeDiff = allRateSize*100 - HQ_RATE.size;
+  const sizeLastDiff = allRateSize*100 - LAST_PERIOD.overall.rate_size;
+  issues.push({ cls: 'amber', text: `<strong>${sizeLastDiff >= 0 ? '尺寸核对率较上期改善' : '尺寸核对大幅下滑'}：</strong>总核对率 ${(allRateSize*100).toFixed(1)}%（${RAW.filter(d=>d.status_size==='已核对').length}/${RAW.filter(d=>d.status_size==='已核对'||d.status_size==='未核对').length}），较总部低 ${Math.abs(sizeDiff).toFixed(1)}%。${sizeLastDiff >= 0 ? '较上期（' + LAST_PERIOD.overall.rate_size.toFixed(1) + '%）提升 +' + sizeLastDiff.toFixed(1) + '%' : '较上期（' + LAST_PERIOD.overall.rate_size.toFixed(1) + '%）下滑 ' + Math.abs(sizeLastDiff).toFixed(1) + '%'}，已看好款式却未发送尺寸图的情况反复出现。` });
+  
+  // 网点核对
+  const addrDiff = allRateAddress*100 - HQ_RATE.address;
+  const addrLastDiff = allRateAddress*100 - LAST_PERIOD.overall.rate_address;
+  issues.push({ cls: 'amber', text: `<strong>网点核对严重不足：</strong>总核对率仅 ${(allRateAddress*100).toFixed(1)}%（${RAW.filter(d=>d.status_address==='已核对').length}/${RAW.filter(d=>d.status_address==='已核对'||d.status_address==='未核对').length}），远低于总部 ${HQ_RATE.address.toFixed(1)}%。${addrLastDiff >= 0 ? '较上期有改善（+' + addrLastDiff.toFixed(1) + '%）' : '较上期下滑' + Math.abs(addrLastDiff).toFixed(1) + '%'}，需作为重点整改方向。` });
+  
+  // 气源核对
+  const powerDiff = allRatePower*100 - HQ_RATE.power;
+  const powerLastDiff = allRatePower*100 - LAST_PERIOD.overall.rate_power;
+  issues.push({ cls: 'blue', text: `<strong>气源核对率持续偏低：</strong>总核对率 ${(allRatePower*100).toFixed(1)}%，较总部低 ${Math.abs(powerDiff).toFixed(1)}%。${powerLastDiff >= 0 ? '较上期改善+' + powerLastDiff.toFixed(1) + '%' : '较上期下滑' + Math.abs(powerLastDiff).toFixed(1) + '%'}，部分会话未询问气源情况即跳过核对。` });
+  
+  document.getElementById('issueItems').innerHTML = issues.map(i => 
+    `<div class="issue-item ${i.cls}"><div class="issue-dot ${i.cls}"></div><div class="issue-text">${i.text}</div></div>`
+  ).join('');
+}
+
+// =================== 综合汇总表 ===================
+function rateTag(r) {
+  const pct = (r * 100).toFixed(0);
+  let icon = '', cls = '';
+  if (r >= 0.8)      { icon = '✅'; cls = 'score-high'; }
+  else if (r >= 0.6) { icon = '⚠️'; cls = 'score-mid'; }
+  else               { icon = '❌'; cls = 'score-low'; }
+  return `<span class="score-pill ${cls}">${icon} ${pct}%</span>`;
+}
+function fmtScoreCell(v) {
+  if (v === null || v === undefined || isNaN(v)) return '<span style="color:#8a96a5">—</span>';
+  const cls = v >= 7.0 ? 'score-high' : v >= 6.0 ? 'score-mid' : 'score-low';
+  return `<span class="score-pill ${cls}">${v.toFixed(2)}</span>`;
+}
+function buildSummaryTable() {
+  const tbody = document.getElementById('summaryBody');
+  const sorted = [...agentStats].sort((a,b) => b.avg_total - a.avg_total);
+  
+  const allStats = {
+    name: '整体均值', alias: '整体均值',
+    count: RAW.length,
+    avg_total: allTotal, avg_attitude: allAttitude,
+    avg_professional: allProfessional, avg_speech: allSpeech, avg_service: allService,
+    rate_install: allRateInstall, rate_size: allRateSize,
+    rate_power: allRatePower, rate_address: allRateAddress,
+    rate_total: totalRateCur / 100,
+  };
+  
+  [...sorted, allStats].forEach((ag, i) => {
+    const isTotal = i === sorted.length;
+    tbody.innerHTML += `<tr style="${isTotal ? 'border-top:2px solid #2979ff;background:rgba(41,121,255,0.07)' : ''}">
+      <td><strong style="color:${isTotal ? '#1976d2' : '#1a2332'}">${ag.alias}</strong></td>
+      <td style="text-align:center;color:#6b7a8d">${ag.count}</td>
+      <td>${fmtScoreCell(ag.avg_attitude)}</td>
+      <td>${fmtScoreCell(ag.avg_professional)}</td>
+      <td>${fmtScoreCell(ag.avg_speech)}</td>
+      <td>${fmtScoreCell(ag.avg_service)}</td>
+      <td>${fmtScoreCell(ag.avg_total)}</td>
+      <td>${rateTag(ag.rate_install)}</td>
+      <td>${rateTag(ag.rate_size)}</td>
+      <td>${rateTag(ag.rate_power)}</td>
+      <td>${rateTag(ag.rate_address)}</td>
+      <td>${rateTag(ag.rate_total)}</td>
+    </tr>`;
+  });
+}
+
+// =================== 折线图 ===================
+function buildLineCharts() {
+  // 得分折线
+  new Chart(document.getElementById('agentDimChart'), {
+    type: 'line',
+    data: {
+      labels: ['服务态度','需求挖掘','推荐介绍','跟进维护'],
+      datasets: AGENTS.map((name, i) => {
+        const ag = agentStats.find(a => a.name === name);
+        return {
+          label: AGENT_ALIAS[name],
+          data: [
+            +ag.avg_attitude.toFixed(2),
+            ag.avg_professional ? +ag.avg_professional.toFixed(2) : null,
+            ag.avg_speech ? +ag.avg_speech.toFixed(2) : null,
+            +ag.avg_service.toFixed(2),
+          ],
+          borderColor: AGENT_COLORS[i], backgroundColor: AGENT_COLORS[i] + '18',
+          pointBackgroundColor: AGENT_COLORS[i], pointRadius: 5, pointHoverRadius: 7,
+          borderWidth: 2.5, tension: 0.3,
+        };
+      })
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#6b7a8d', font:{size:11}, boxWidth:12 } },
+        tooltip: { callbacks: { label: ctx => ctx.parsed.y !== null ? ` ${ctx.dataset.label}: ${ctx.parsed.y}` : '' } }
+      },
+      scales: {
+        x: { ticks: { color: '#3a4a5c', font:{size:12} }, grid: { color: '#e0e5ec' } },
+        y: { min: 0, max: 10, ticks: { color: '#6b7a8d', font:{size:11}, stepSize: 2 }, grid: { color: '#e0e5ec' } }
+      }
+    }
+  });
+
+  // 核对率折线
+  new Chart(document.getElementById('followAllChart'), {
+    type: 'line',
+    data: {
+      labels: ['新换装','尺寸核对','气源核对','网点核对'],
+      datasets: AGENTS.map((name, i) => {
+        const rows = RAW.filter(d => d.agent === name);
+        return {
+          label: AGENT_ALIAS[name],
+          data: [
+            +(followRate(rows, 'status_install') * 100).toFixed(1),
+            +(followRate(rows, 'status_size') * 100).toFixed(1),
+            +(followRate(rows, 'status_power') * 100).toFixed(1),
+            +(followRate(rows, 'status_address') * 100).toFixed(1),
+          ],
+          borderColor: AGENT_COLORS[i], backgroundColor: AGENT_COLORS[i] + '18',
+          pointBackgroundColor: AGENT_COLORS[i], pointRadius: 5, pointHoverRadius: 7,
+          borderWidth: 2.5, tension: 0.3,
+        };
+      })
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#6b7a8d', font:{size:11}, boxWidth:12, padding:10 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } }
+      },
+      scales: {
+        x: { ticks: { color: '#3a4a5c', font:{size:12} }, grid: { color: '#e0e5ec' } },
+        y: { min: 0, max: 100, ticks: { color: '#6b7a8d', font:{size:11}, callback: v => v+'%', stepSize: 20 }, grid: { color: '#e0e5ec' } }
+      }
+    }
+  });
+}
+
+// =================== 环比对比图 ===================
+function buildTrendCharts() {
+  // 评分环比
+  const trendScoreCurrent = [allAttitude, allProfessional, allSpeech, allService, allTotal].map(v => +v.toFixed(2));
+  const trendScoreLast = [LAST_PERIOD.overall.attitude, LAST_PERIOD.overall.professional, LAST_PERIOD.overall.speech, LAST_PERIOD.overall.service, LAST_PERIOD.overall.total];
+  const trendScoreBase = [HQ_SCORE.attitude, HQ_SCORE.professional, HQ_SCORE.speech, HQ_SCORE.service, HQ_SCORE.total];
+  
+  new Chart(document.getElementById('trendScoreChart'), {
+    type: 'bar',
+    data: {
+      labels: ['服务态度','需求挖掘','推荐介绍','跟进维护','综合得分'],
+      datasets: [
+        { label: '上期', data: trendScoreLast, backgroundColor: 'rgba(123,31,162,0.55)', borderRadius: 4 },
+        { label: '本期', data: trendScoreCurrent, backgroundColor: 'rgba(25,118,210,0.8)', borderRadius: 4 },
+        { label: '总部得分', data: trendScoreBase, type: 'line',
+          borderColor: '#2e7d32', backgroundColor: 'transparent', pointBackgroundColor: '#2e7d32',
+          borderWidth: 2, borderDash: [5,3], pointRadius: 4, tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: {
+        legend: { position:'bottom', labels:{ color:'#6b7a8d', font:{size:11}, boxWidth:12 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} 分` } }
+      },
+      scales: {
+        x: { ticks:{ color:'#3a4a5c', font:{size:11} }, grid:{ color:'#e0e5ec' } },
+        y: { min:0, max:10, ticks:{ color:'#6b7a8d', font:{size:10}, stepSize:2 }, grid:{ color:'#e0e5ec' } }
+      }
+    }
+  });
+
+  // 核对率环比
+  const trendRateCurrent = [
+    +(allRateInstall*100).toFixed(1), +(allRateSize*100).toFixed(1),
+    +(allRatePower*100).toFixed(1), +(allRateAddress*100).toFixed(1), totalRateCur
+  ];
+  const trendRateLast = [LAST_PERIOD.overall.rate_install, LAST_PERIOD.overall.rate_size, LAST_PERIOD.overall.rate_power, LAST_PERIOD.overall.rate_address, LAST_PERIOD.overall.rate_total];
+  const trendRateBase = [HQ_RATE.install, HQ_RATE.size, HQ_RATE.power, HQ_RATE.address, HQ_RATE.total];
+  
+  new Chart(document.getElementById('trendRateChart'), {
+    type: 'bar',
+    data: {
+      labels: ['新换装','尺寸核对','气源核对','网点核对','总核对率'],
+      datasets: [
+        { label: '上期', data: trendRateLast, backgroundColor: 'rgba(123,31,162,0.55)', borderRadius: 4 },
+        { label: '本期', data: trendRateCurrent, backgroundColor: 'rgba(0,131,143,0.8)', borderRadius: 4 },
+        { label: '总部核对率', data: trendRateBase, type: 'line',
+          borderColor: '#2e7d32', backgroundColor: 'transparent', pointBackgroundColor: '#2e7d32',
+          borderWidth: 2, borderDash: [5,3], pointRadius: 4, tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: {
+        legend: { position:'bottom', labels:{ color:'#6b7a8d', font:{size:11}, boxWidth:12 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } }
+      },
+      scales: {
+        x: { ticks:{ color:'#3a4a5c', font:{size:11} }, grid:{ color:'#e0e5ec' } },
+        y: { min:0, max:100, ticks:{ color:'#6b7a8d', font:{size:10}, callback:v=>v+'%', stepSize:20 }, grid:{ color:'#e0e5ec' } }
+      }
+    }
+  });
+}
+
+// =================== 客服个人小结 ===================
+function buildSummaries() {
+  const grid = document.getElementById('agentSummaryGrid');
+  const sorted = [...agentStats].sort((a, b) => b.avg_total - a.avg_total);
+  
+  const generateText = (ag, rank) => {
+    const last = LAST_PERIOD.agents[ag.name];
+    const texts = [];
+    
+    // 优势
+    const strengths = [];
+    if (ag.rate_install >= 0.8) strengths.push(`新换装核对率达 ${(ag.rate_install*100).toFixed(0)}%`);
+    if (ag.avg_attitude >= 7.0) strengths.push('服务态度稳定保持7分');
+    if (ag.avg_total >= 7.0) strengths.push('综合得分达到优秀线');
+    if (ag.avg_service >= 7.0) strengths.push(`跟进维护均分 ${ag.avg_service.toFixed(2)} 表现突出`);
+    if (ag.avg_professional >= 6.0) strengths.push(`需求挖掘均分 ${ag.avg_professional.toFixed(0)} 团队领先`);
+    else if (ag.avg_professional > 0 && ag.avg_professional < 6.0) strengths.push(`需求挖掘均分 ${ag.avg_professional.toFixed(1)} 有提升空间`);
+    if (ag.rate_size >= 0.6) strengths.push(`尺寸核对率 ${(ag.rate_size*100).toFixed(0)}% 团队领先`);
+    if (ag.rate_power >= 0.6) strengths.push(`气源核对率 ${(ag.rate_power*100).toFixed(0)}% 团队领先`);
+    
+    // 短板
+    const weaknesses = [];
+    if (ag.rate_install < 0.8) weaknesses.push(`新换装核对 ${(ag.rate_install*100).toFixed(0)}% 未达标`);
+    if (ag.rate_size < 0.5) weaknesses.push(`尺寸核对仅 ${(ag.rate_size*100).toFixed(0)}%`);
+    if (ag.rate_power < 0.5) weaknesses.push(`气源核对仅 ${(ag.rate_power*100).toFixed(0)}%`);
+    if (ag.rate_address < 0.4) weaknesses.push(`网点核对仅 ${(ag.rate_address*100).toFixed(0)}%`);
+    if (ag.avg_service < 6.5) weaknesses.push(`跟进维护仅 ${ag.avg_service.toFixed(2)} 分`);
+    // 需求挖掘：只有"涉及但得分低"才列入短板，纯未涉及不列出
+    const profValid = RAW.filter(d => d.agent === ag.name && d.score_professional !== null);
+    if (profValid.length > 0 && (ag.avg_professional === 0 || ag.avg_professional < 3)) {
+      weaknesses.push(`需求挖掘仅 ${ag.avg_professional.toFixed(1)} 分（涉及${profValid.length}条）`);
+    }
+    if (ag.avg_total < 6.5) weaknesses.push('综合得分偏低需重点提升');
+    
+    let text = `综合得分 ${ag.avg_total.toFixed(2)} 分，`;
+    
+    if (last) {
+      const delta = ag.avg_total - last.total;
+      if (Math.abs(delta) < 0.05) text += '较上期基本持平。';
+      else if (delta > 0) text += `较上期提升 ${delta.toFixed(2)} 分。`;
+      else text += `较上期下滑 ${Math.abs(delta).toFixed(2)} 分。`;
+    } else {
+      text += '本期首次纳入评估。';
+    }
+    
+    if (strengths.length > 0) {
+      text += `<br>主要优势：${strengths.join('、')}。`;
+    }
+    if (weaknesses.length > 0) {
+      text += `<br>主要待改进：${weaknesses.join('、')}，需加强相关核对规范。`;
+    }
+    
+    return text;
+  };
+  
+  const generateTags = (ag) => {
+    const tags = [];
+    const rank = sorted.indexOf(ag) + 1;
+    // 优先级：1.需求挖掘0分(红色) 2.核对率<40%(红色) 3.核对率40-60%(黄色) 4.跟进维护优秀(绿色)
+    // 最多显示3个标签，避免卡片过长
+    
+    // 1. 需求挖掘0分（最高优先级）
+    const profV = RAW.filter(d => d.agent === ag.name && d.score_professional !== null);
+    if (profV.length > 0 && ag.avg_professional === 0) {
+      tags.push({ text: `需求挖掘0分`, cls: 'bad' });
+    }
+    
+    // 2. 核对率问题（只显示最差的1-2个）
+    const badChecks = [];
+    if (ag.rate_size < 0.4) badChecks.push({ text: `尺寸核对${(ag.rate_size*100).toFixed(0)}%`, cls: 'bad' });
+    if (ag.rate_address < 0.3) badChecks.push({ text: `网点核对${(ag.rate_address*100).toFixed(0)}%`, cls: 'bad' });
+    if (ag.rate_power < 0.4) badChecks.push({ text: `气源核对${(ag.rate_power*100).toFixed(0)}%`, cls: 'bad' });
+    if (ag.rate_install < 0.8) badChecks.push({ text: `新换装${(ag.rate_install*100).toFixed(0)}%`, cls: 'warn' });
+    
+    // 只取最差的2个
+    badChecks.slice(0, 2).forEach(t => tags.push(t));
+    
+    // 3. 跟进维护短板（得分项）
+    if (ag.avg_service < 6.5) {
+      tags.push({ text: `跟进维护${ag.avg_service.toFixed(1)}分`, cls: 'warn' });
+    }
+    
+    // 4. 跟进维护优秀（如果还有空间）
+    if (tags.length < 3 && ag.avg_service >= 7.0) {
+      tags.push({ text: `跟进维护优秀`, cls: 'good' });
+    }
+    return tags;
+  };
+  
+  sorted.forEach((ag, i) => {
+    const rank = i + 1;
+    const rankCls = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
+    const last = LAST_PERIOD.agents[ag.name];
+    let lastStr;
+    if (last) {
+      const delta = ag.avg_total - last.total;
+      const deltaStr = delta >= 0 ? `<span style="color:#2e7d32">▲ +${delta.toFixed(2)}</span>` : `<span style="color:#c62828">▼ ${delta.toFixed(2)}</span>`;
+      lastStr = `上期 ${last.total.toFixed(2)} 分 ${deltaStr}`;
+    } else {
+      lastStr = `<span style="color:#8a96a5">上期无数据</span>`;
+    }
+    
+    const tags = generateTags(ag);
+    const tagsHtml = tags.map(t => `<span class="s-tag ${t.cls}">${t.text}</span>`).join('');
+    const text = generateText(ag, rank);
+    
+    grid.innerHTML += `<div class="summary-card">
+      <div class="summary-card-header">
+        <div class="summary-rank ${rankCls}">${rank}</div>
+        <div class="summary-avatar" style="background:${ag.color}">${ag.alias[0]}</div>
+        <div>
+          <div class="summary-name">${ag.alias}</div>
+          <div class="summary-score">本期综合 ${ag.avg_total.toFixed(2)} 分<br>${lastStr}</div>
+        </div>
+      </div>
+      <div class="summary-tags">${tagsHtml}</div>
+      <div class="summary-text">${text}</div>
+    </div>`;
+  });
+}
+
+// =================== 初始化 ===================
+buildKpiCards();
+buildRadarCharts();
+buildGapTables();
+buildIssues();
+buildSummaryTable();
+buildLineCharts();
+buildTrendCharts();
+buildSummaries();
+</script>
+
+
+</body></html>

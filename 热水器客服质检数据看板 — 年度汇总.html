@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!-- saved from url=(0184)https://aqz123-hue.github.io/agent-session-quality-dashboard/%E7%83%AD%E6%B0%B4%E5%99%A8%E5%AE%A2%E6%9C%8D%E8%B4%A8%E6%A3%80%E7%9C%8B%E6%9D%BF_%E5%B9%B4%E5%BA%A6%E6%B1%87%E6%80%BB.html -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>热水器客服质检数据看板 — 年度汇总</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background:#eef1f6; }
+  body { font-family:'Microsoft YaHei','PingFang SC',sans-serif; color:#1a2332; }
+  .topbar {
+    background:linear-gradient(135deg,#1a3a5c 0%,#2a5a8a 100%);
+    padding:20px 32px 16px; color:#fff;
+  }
+  .topbar h1 { font-size:20px; font-weight:700; display:flex; align-items:center; gap:12px; }
+  .topbar .sub { font-size:13px; color:#b0c8e8; margin-top:6px; }
+  .topbar .accent {
+    width:38px;height:38px;border-radius:9px;
+    background:linear-gradient(135deg,#2979ff,#00b0ff);
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+  }
+  /* ===== 月份选择按钮（下拉） ===== */
+  .pickerbar {
+    position:sticky; top:0; z-index:50; background:#fff;
+    border-bottom:1px solid #d0d7e0; box-shadow:0 2px 10px rgba(0,0,0,.05);
+    padding:12px 32px; display:flex; align-items:center; gap:14px;
+  }
+  .picker-label { font-size:13px; color:#6b7a8d; font-weight:600; }
+  .month-picker { position:relative; }
+  .month-toggle {
+    display:flex; align-items:center; gap:10px;
+    border:1px solid #2979ff; background:#f0f6ff; color:#1565c0;
+    padding:10px 18px; border-radius:10px; cursor:pointer;
+    font-size:15px; font-weight:700; transition:all .18s; min-width:170px;
+  }
+  .month-toggle:hover { background:#e3efff; }
+  .month-toggle .cal { font-size:17px; }
+  .month-toggle .caret { margin-left:auto; transition:transform .2s; color:#1565c0; }
+  .month-picker.open .month-toggle .caret { transform:rotate(180deg); }
+  .month-menu {
+    position:absolute; top:calc(100% + 8px); left:0; min-width:220px;
+    background:#fff; border:1px solid #d0d7e0; border-radius:12px;
+    box-shadow:0 12px 32px rgba(20,40,80,.18); padding:8px;
+    display:none; z-index:60;
+  }
+  .month-picker.open .month-menu { display:block; }
+  .month-menu-title {
+    font-size:11px; color:#8a96a5; padding:6px 10px 8px; letter-spacing:1px;
+  }
+  .month-item {
+    width:100%; text-align:left; border:none; background:transparent;
+    padding:11px 12px; border-radius:8px; cursor:pointer;
+    font-size:14px; font-weight:600; color:#3a4a5c; transition:background .15s;
+    display:flex; align-items:center; gap:8px;
+  }
+  .month-item:hover { background:#f0f6ff; }
+  .month-item.active { background:linear-gradient(135deg,#2979ff,#1565c0); color:#fff; }
+  .month-item.active:hover { background:linear-gradient(135deg,#2979ff,#1565c0); }
+  .tab-badge {
+    font-size:10px; background:rgba(255,255,255,.25);
+    padding:1px 6px; border-radius:8px; margin-left:6px; vertical-align:middle;
+  }
+  .month-item:not(.active) .tab-badge {
+    background:#e3efff; color:#1565c0;
+  }
+  .picker-hint { font-size:12px; color:#8a96a5; }
+  .panel { padding:18px 24px 40px; }
+  .dash-frame {
+    width:100%; height:3600px; border:none; display:block; background:#f5f7fa;
+    border-radius:12px; overflow:hidden;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <h1><span class="accent">📊</span> 热水器客服质检数据看板</h1>
+    <div class="sub">2026 年度汇总看板 · 按月份查看；8月已按最新店铺看板原样嵌入（4–7月趋势页保持原样）</div>
+  </div>
+  <div class="pickerbar">
+    <span class="picker-label">月份选择</span>
+    <div class="month-picker" id="monthPicker">
+      <button class="month-toggle" id="monthToggle" aria-haspopup="listbox" aria-expanded="false">
+        <span class="cal">📅</span>
+        <span id="monthLabel">2026年8月</span>
+        <span class="caret">▾</span>
+      </button>
+      <div class="month-menu" id="monthMenu" role="listbox" aria-label="月份选择">
+        <div class="month-menu-title">选择月份</div>
+        <button class="month-item" data-month="4月" role="option" aria-selected="false">2026年4月</button>
+        <button class="month-item" data-month="5月" role="option" aria-selected="false">2026年5月</button>
+        <button class="month-item" data-month="6月" role="option" aria-selected="false">2026年6月</button>
+        <button class="month-item" data-month="7月" role="option" aria-selected="false">2026年7月</button><button class="month-item active" data-month="8月" role="option" aria-selected="true">2026年8月 <span class="tab-badge">最新</span></button><button class="month-item" data-month="半年度" role="option" aria-selected="false">阶段趋势(4-7月) <span class="tab-badge">原口径</span></button>
+      </div>
+    </div>
+    <span class="picker-hint">提示：每个月份看板为独立页面，内容与原始文件完全一致。</span>
+  </div>
+    <div class="panel" id="panel-4月" data-month="4月" style="display:none"><iframe class="dash-frame" id="frame-4月" title="4月热水器客服质检看板" frameborder="0" scrolling="no" src="./热水器客服质检数据看板 — 年度汇总_files/saved_resource.html"></iframe></div>
+    <div class="panel" id="panel-5月" data-month="5月" style="display:none"><iframe class="dash-frame" id="frame-5月" title="5月热水器客服质检看板" frameborder="0" scrolling="no" src="./热水器客服质检数据看板 — 年度汇总_files/saved_resource(1).html"></iframe></div>
+    <div class="panel" id="panel-6月" data-month="6月" style="display:none"><iframe class="dash-frame" id="frame-6月" title="6月热水器客服质检看板" frameborder="0" scrolling="no" src="./热水器客服质检数据看板 — 年度汇总_files/saved_resource(2).html"></iframe></div>
+    <div class="panel" id="panel-7月" data-month="7月" style="display:none"><iframe class="dash-frame" id="frame-7月" title="7月热水器客服质检看板" frameborder="0" scrolling="no" src="./热水器客服质检数据看板 — 年度汇总_files/saved_resource(3).html"></iframe></div><div class="panel" id="panel-8月" data-month="8月" style="display:block"><iframe class="dash-frame" id="frame-8月" title="8月热水器店铺会话质量看板" frameborder="0" scrolling="no" src="./热水器客服质检数据看板 — 年度汇总_files/saved_resource(5).html"></iframe></div>
+    <div class="panel" id="panel-半年度" data-month="半年度" style="display:none"><iframe class="dash-frame" id="frame-半年度" title="半年度热水器客服质检看板" frameborder="0" scrolling="no" style="height: 3696px;" src="./热水器客服质检数据看板 — 年度汇总_files/saved_resource(4).html"></iframe></div>
+<script>
+  var picker = document.getElementById('monthPicker');
+  var toggle = document.getElementById('monthToggle');
+  var labelEl = document.getElementById('monthLabel');
+
+  function activate(month){
+    document.querySelectorAll('.month-item').forEach(function(it){
+      var on = it.getAttribute('data-month')===month;
+      it.classList.toggle('active', on);
+      it.setAttribute('aria-selected', on ? 'true':'false');
+    });
+    document.querySelectorAll('.panel').forEach(function(p){
+      p.style.display = (p.getAttribute('data-month')===month) ? 'block':'none';
+    });
+    labelEl.textContent = '2026年' + month;
+    // 重置并重新触发当前 iframe 高度上报
+    var frame = document.getElementById('frame-'+month);
+    if(frame){ frame.style.height = '3600px'; }
+  }
+
+  toggle.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = picker.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true':'false');
+  });
+
+  document.querySelectorAll('.month-item').forEach(function(it){
+    it.addEventListener('click', function(){
+      activate(it.getAttribute('data-month'));
+      picker.classList.remove('open');
+      toggle.setAttribute('aria-expanded','false');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  // 点击空白处关闭下拉
+  document.addEventListener('click', function(e){
+    if(!picker.contains(e.target)){
+      picker.classList.remove('open');
+      toggle.setAttribute('aria-expanded','false');
+    }
+  });
+
+  function setFrameHeight(h, sourceWin){
+    var iframe = null;
+    document.querySelectorAll('iframe').forEach(function(f){
+      if(f.contentWindow === sourceWin) iframe = f;
+    });
+    if(iframe) iframe.style.height = (h + 24) + 'px';
+  }
+  window.addEventListener('message', function(e){
+    var d = e.data;
+    if(d && d.__dashHeight && e.source){
+      setFrameHeight(d.__dashHeight, e.source);
+    }
+  });
+activate('8月');
+</script>
+
+
+</body></html>

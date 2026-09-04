@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>热水器客服质检看板 — 半年度(4-7月)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; background:#f5f7fa; color:#1a2332; min-height:100vh; }
+  .header { background:linear-gradient(135deg,#1a3a5c 0%,#2a5a8a 100%); padding:22px 36px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #d0d7e0; }
+  .header-left { display:flex; align-items:center; gap:14px; }
+  .header-icon { width:44px; height:44px; background:linear-gradient(135deg,#2979ff,#00b0ff); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .header-title h1 { font-size:20px; font-weight:700; color:#fff; }
+  .header-title p { font-size:13px; color:#b0c8e8; margin-top:2px; }
+  .badge { background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); border-radius:20px; padding:4px 12px; color:#fff; font-size:12px; }
+  .main { padding:24px 32px; max-width:1240px; margin:0 auto; }
+  .section-title { font-size:14px; color:#1a6fb5; letter-spacing:1px; text-transform:uppercase; margin:26px 0 14px; display:flex; align-items:center; gap:8px; }
+  .section-title::before { content:''; width:3px; height:14px; background:#2979ff; display:inline-block; border-radius:2px; }
+  .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .card { background:#fff; border-radius:12px; padding:16px 18px; box-shadow:0 2px 10px rgba(20,40,80,0.06); border:1px solid #eef1f6; }
+  .card .k { font-size:12px; color:#7a8aa0; }
+  .card .v { font-size:24px; font-weight:700; margin:6px 0 2px; }
+  .card .sub { font-size:12px; color:#9aa7bc; }
+  .up { color:#2e7d32; } .down { color:#c62828; } .flat { color:#888; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .chart-box { background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 2px 10px rgba(20,40,80,0.06); border:1px solid #eef1f6; }
+  .chart-box h3 { font-size:14px; color:#33425c; margin-bottom:10px; }
+  .chart-wrap { position:relative; height:300px; }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(20,40,80,0.06); font-size:13px; }
+  th,td { padding:10px 12px; text-align:center; border-bottom:1px solid #eef1f6; }
+  th { background:#eef4fb; color:#33425c; font-weight:600; }
+  td.label { text-align:left; color:#33425c; font-weight:600; }
+  .note { background:#fff8e1; border:1px solid #ffe082; border-radius:10px; padding:14px 16px; font-size:13px; color:#5d4037; line-height:1.9; }
+  .note b { color:#c62828; }
+</style>
+</head>
+<body>
+
+<div class="main">
+
+  <div class="section-title">核心指标趋势（4月 → 7月）</div>
+  <div class="cards">
+    <div class="card"><div class="k">综合平均得分</div><div class="v">6.89<span style="font-size:13px;color:#9aa7bc">分</span></div><div class="sub down">4月 6.95 → 7月 6.89 ↓ 下滑</div></div><div class="card"><div class="k">总核对率</div><div class="v">56.49<span style="font-size:13px;color:#9aa7bc">%</span></div><div class="sub down">4月 64.52 → 7月 56.49 ↓ 下滑</div></div><div class="card"><div class="k">新换装核对率</div><div class="v">74.68<span style="font-size:13px;color:#9aa7bc">%</span></div><div class="sub down">4月 89.09 → 7月 74.68 ↓ 下滑</div></div><div class="card"><div class="k">尺寸核对率</div><div class="v">42.42<span style="font-size:13px;color:#9aa7bc">%</span></div><div class="sub down">4月 44.12 → 7月 42.42 ↓ 下滑</div></div>
+  </div>
+
+  <div class="grid2" style="margin-top:20px">
+    <div class="chart-box"><h3>综合平均得分趋势（对比总部基准）</h3><div class="chart-wrap"><canvas id="cScore" width="805" height="450" style="display: block; box-sizing: border-box; height: 300px; width: 536px;"></canvas></div></div>
+    <div class="chart-box"><h3>四项核对率趋势（对比总部基准）</h3><div class="chart-wrap"><canvas id="cRate" width="805" height="450" style="display: block; box-sizing: border-box; height: 300px; width: 536px;"></canvas></div></div>
+  </div>
+
+  <div class="grid2" style="margin-top:20px">
+    <div class="chart-box"><h3>维度均分趋势（态度 / 需求挖掘 / 推荐介绍 / 跟进维护）</h3><div class="chart-wrap"><canvas id="cDim" width="805" height="450" style="display: block; box-sizing: border-box; height: 300px; width: 536px;"></canvas></div></div>
+    <div class="chart-box"><h3>各客服综合得分趋势</h3><div class="chart-wrap"><canvas id="cAgent" width="805" height="450" style="display: block; box-sizing: border-box; height: 300px; width: 536px;"></canvas></div></div>
+  </div>
+
+  <div class="section-title">月度明细数据</div>
+  <table>
+    <thead><tr><th class="label">指标</th><th>4月<br><span style="font-weight:400;color:#9aa7bc">n=60</span></th><th>5月<br><span style="font-weight:400;color:#9aa7bc">n=76</span></th><th>6月<br><span style="font-weight:400;color:#9aa7bc">n=76</span></th><th>7月<br><span style="font-weight:400;color:#9aa7bc">n=90</span></th><th>总部</th></tr></thead>
+    <tbody>
+      <tr><td class="label">综合平均得分</td><td>6.95</td><td>6.77</td><td>6.84</td><td>6.89</td><td>7.15</td></tr>
+      <tr><td class="label">服务态度均分</td><td>7.00</td><td>6.95</td><td>6.99</td><td>7.01</td><td>7.00</td></tr>
+      <tr><td class="label">需求挖掘均分</td><td>5.17</td><td>4.15</td><td>4.75</td><td>4.50</td><td>7.60</td></tr>
+      <tr><td class="label">推荐介绍均分</td><td>6.89</td><td>6.51</td><td>6.87</td><td>6.60</td><td>7.19</td></tr>
+      <tr><td class="label">跟进维护均分</td><td>7.00</td><td>6.83</td><td>6.78</td><td>7.00</td><td>7.23</td></tr>
+      <tr><td class="label">总核对率(%)</td><td>64.52</td><td>63.11</td><td>56.60</td><td>56.49</td><td>88.25</td></tr>
+      <tr><td class="label">新换装核对率(%)</td><td>89.09</td><td>86.57</td><td>80.28</td><td>74.68</td><td>93.05</td></tr>
+      <tr><td class="label">尺寸核对率(%)</td><td>44.12</td><td>48.28</td><td>40.00</td><td>42.42</td><td>81.77</td></tr>
+      <tr><td class="label">气源核对率(%)</td><td>75.61</td><td>62.50</td><td>53.45</td><td>49.18</td><td>86.27</td></tr>
+      <tr><td class="label">网点核对率(%)</td><td>20.00</td><td>47.73</td><td>36.36</td><td>55.36</td><td>90.10</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">趋势研判与重点改善方向</div>
+  <div class="note">
+    <b>1. 核对率整体持续走低，是半年度最大短板。</b> 总核对率从4月 64.52% 下滑至7月 56.49%，与总部 88.25% 差距超 30 个百分点；其中<b>新换装核对率</b>由 89.09% 连降 4 月至 74.68%、<b>气源核对率</b>由 75.61% 降至 49.18%，下滑最陡，需优先固化"下单必核新换装+气源"话术。<br>
+    <b>2. 尺寸核对率长期低位徘徊。</b> 4个月均处于 40–48% 区间，远低于总部 81.77%，是共性薄弱环节。<br>
+    <b>3. 综合得分先降后稳。</b> 5月探底 6.77 分后回升至7月 6.89 分，仍低于总部 7.15 分；<b>需求挖掘均分</b>始终最低（4.15–5.17 分），是最大的得分拖累项。<br>
+    <b>4. 网点核对率波动大。</b> 4月仅 20.00%（样本结构差异）后回升，7月达 55.36%，说明该动作可通过管理改善，应形成标准动作持续固化。
+  </div>
+
+</div>
+<script>
+const MONTHS = ["4月", "5月", "6月", "7月"];
+const HQ_SCORE = [7.15, 7.0, 7.6, 7.19, 7.23];
+const HQ_RATE  = [88.25, 93.05, 81.77, 86.27, 90.1];
+const AGENT_COLORS = {'梁肖用': '#e65100', '邓树林': '#2e7d32', '杨鑫': '#7b1fa2', '黄大安': '#1976d2', '周文强': '#00838f'};
+const agentSeries = {'梁肖用': [6.973, 6.923, 6.991, 6.76], '邓树林': [6.88, 6.847, 6.747, 6.843], '杨鑫': [6.967, 6.91, 6.997, 6.967], '黄大安': [6.967, 6.95, 6.633, 6.897], '周文强': [null, 6.22, 6.84, 6.927]};
+
+const baseLine = { tension:0.3, spanGaps:true, pointRadius:4, pointHoverRadius:6, borderWidth:2.5 };
+function mk(id, cfg) { new Chart(document.getElementById(id), cfg); }
+
+// 综合得分
+mk('cScore', {
+  type:'line',
+  data:{ labels:MONTHS, datasets:[
+    { ...baseLine, label:'综合得分', data:[6.9467, 6.7711, 6.8434, 6.8911], borderColor:'#1565c0', backgroundColor:'rgba(21,101,192,0.08)', fill:true },
+    { ...baseLine, label:'总部基准', data:MONTHS.map(()=>HQ_SCORE[0]), borderColor:'#2e7d32', borderDash:[6,4], pointRadius:0, borderWidth:2 }
+  ]},
+  options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ suggestedMin:6, suggestedMax:7.6, title:{display:true,text:'分'} } }, plugins:{ legend:{position:'top'} } }
+});
+
+// 四项核对率
+mk('cRate', {
+  type:'line',
+  data:{ labels:MONTHS, datasets:[
+    { ...baseLine, label:'总核对率', data:[64.52, 63.11, 56.6, 56.49], borderColor:'#1565c0', borderWidth:3 },
+    { ...baseLine, label:'新换装', data:[89.09, 86.57, 80.28, 74.68], borderColor:'#2e7d32' },
+    { ...baseLine, label:'尺寸', data:[44.12, 48.28, 40.0, 42.42], borderColor:'#e65100' },
+    { ...baseLine, label:'气源', data:[75.61, 62.5, 53.45, 49.18], borderColor:'#7b1fa2' },
+    { ...baseLine, label:'网点', data:[20.0, 47.73, 36.36, 55.36], borderColor:'#c62828' },
+    { ...baseLine, label:'总部总核对率', data:MONTHS.map(()=>HQ_RATE[0]), borderColor:'#888', borderDash:[6,4], pointRadius:0, borderWidth:2 }
+  ]},
+  options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ suggestedMin:0, suggestedMax:100, title:{display:true,text:'%'} } }, plugins:{ legend:{position:'top'} } }
+});
+
+// 维度均分
+mk('cDim', {
+  type:'line',
+  data:{ labels:MONTHS, datasets:[
+    { ...baseLine, label:'服务态度', data:[7.0, 6.947, 6.987, 7.011], borderColor:'#1565c0' },
+    { ...baseLine, label:'需求挖掘', data:[5.167, 4.154, 4.75, 4.5], borderColor:'#e65100' },
+    { ...baseLine, label:'推荐介绍', data:[6.893, 6.514, 6.871, 6.597], borderColor:'#7b1fa2' },
+    { ...baseLine, label:'跟进维护', data:[7.0, 6.829, 6.776, 7.0], borderColor:'#00838f' },
+    { ...baseLine, label:'总部(均)', data:MONTHS.map(()=>((HQ_SCORE[1]+HQ_SCORE[2]+HQ_SCORE[3]+HQ_SCORE[4])/4)), borderColor:'#2e7d32', borderDash:[6,4], pointRadius:0, borderWidth:2 }
+  ]},
+  options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ suggestedMin:0, suggestedMax:8, title:{display:true,text:'分'} } }, plugins:{ legend:{position:'top'} } }
+});
+
+// 各客服
+const agentDatasets = Object.keys(agentSeries).map(nm => ({
+  ...baseLine, label:nm, data:agentSeries[nm], borderColor:AGENT_COLORS[nm], borderWidth:2
+}));
+mk('cAgent', {
+  type:'line',
+  data:{ labels:MONTHS, datasets:agentDatasets },
+  options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ suggestedMin:6, suggestedMax:7.6, title:{display:true,text:'综合得分'} } }, plugins:{ legend:{position:'top'} } }
+});
+</script>
+<script>(function(){function post(){try{parent.postMessage({__dashHeight:document.documentElement.scrollHeight},"*");}catch(e){}}window.addEventListener("load",function(){post();setTimeout(post,400);setTimeout(post,1200);setTimeout(post,2500);});})();</script>
+</body></html>
