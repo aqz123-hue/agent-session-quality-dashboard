@@ -3,7 +3,7 @@
 <html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>海亿代理商客服质检数据看板</title>
+<title>海亿专项会话质量评估报告</title>
 <style>
 :root {
   --bg:#f5f6fa; --surface:#fff; --card:#fff; --border:#e2e6f0;
@@ -278,7 +278,7 @@ canvas{max-height:330px;}
 </style><style>.benchmark-conclusion{padding:9px 14px!important;margin:8px 0 10px!important}.benchmark-conclusion p{margin:0!important;font-size:12px!important;line-height:1.5!important}.score-trend-grid--three{grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:stretch}.score-trend-grid--three .score-trend-card{display:flex;flex-direction:column}.trend-card-summary{margin-top:auto;padding-top:14px;border-top:1px solid #edf0f5;color:#53627e;font-size:12px;line-height:1.6}.trend-up{color:#059669!important;font-weight:700}.trend-down{color:#dc2626!important;font-weight:700}.trend-flat{color:#64748b!important;font-weight:600}@media(max-width:1100px){.score-trend-grid--three{grid-template-columns:1fr!important}}</style></head><body><div class="container">
 
 <div class="page-header">
-  <h1>海亿代理商客服质检数据看板</h1>
+  <h1>海亿专项会话质量评估报告</h1>
   <div class="subtitle">数据源：方太洗碗机旗舰店.xlsx ｜ 1 家店铺（天猫 / 拼多多）· 50 条样本（有效 50 / 无效 0）｜ 数据更新：2026-08-10</div>
   <div class="badge-row">
     <span class="badge badge-blue">方太洗碗机旗舰店</span>
@@ -999,7 +999,7 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
  const score=v=>v==null?'—':Number(v).toFixed(2), pct=v=>v==null?'—':Number(v).toFixed(1)+'%';
  const sClass=v=>v==null?'heat-na':v>=7?'heat-good':v>=6?'heat-mid':'heat-bad';
  const rClass=v=>v==null?'heat-na':v>=70?'heat-good':v>=40?'heat-mid':'heat-bad';
- qs('h1').textContent='海亿代理商客服质检数据看板';
+ qs('h1').textContent='海亿专项会话质量评估报告';
  qs('.subtitle').textContent='数据源：（海亿）代理商店铺样本汇总表.xlsx · 数据明细｜3 家店铺 · 45 条样本（有效 44 / 无效 1）｜实际会话日期：2026-08-01 至 2026-09-13';
  const badges=qsa('.badge-row .badge'); badges[0].textContent='海亿代理商'; badges[1].textContent='本期质检'; badges[2].textContent='店铺 3 家'; badges[3].textContent='查检 45 条 · 有效率 97.8%';
  qs('.dimension-details .alert').innerHTML='本报告围绕 <b>8 项核心指标</b> 对海亿代理商 3 家店铺的会话质量进行评查，分为“会话得分”和“信息核对”两类，覆盖接待、需求识别、推荐及安装服务确认。';
