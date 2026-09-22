@@ -559,7 +559,7 @@ trendLine('chartTrendScore', TREND.score_by_channel, TREND.score_overall, 7.0, f
 trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true, 40);
 </script>
 
-<div id="legacyImgLightbox" hidden aria-hidden="true">
+<div id="imgLightbox" role="dialog" aria-modal="true" aria-label="案例截图查看器">
   <div class="lb-toolbar">
     <button type="button" data-lb-action="zoom-out" aria-label="缩小">−</button>
     <span id="lbZoomValue">适配</span>
@@ -1149,43 +1149,7 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
 }
 </style>
 <script id="inline-case-viewer-script">
-(()=>{
-  const selector='#weak-analysis .case-item-img img';
-  const collapse=item=>{
-    item.classList.remove('case-item--expanded');
-    const image=item.querySelector('.case-item-img img');
-    if(image) image.setAttribute('aria-expanded','false');
-  };
-  const expand=image=>{
-    const item=image.closest('.case-item');
-    document.querySelectorAll('#weak-analysis .case-item--expanded').forEach(openItem=>{
-      if(openItem!==item) collapse(openItem);
-    });
-    item.classList.add('case-item--expanded');
-    image.setAttribute('aria-expanded','true');
-  };
-  document.addEventListener('click',event=>{
-    const image=event.target.closest?.(selector);
-    if(!image) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const item=image.closest('.case-item');
-    item.classList.contains('case-item--expanded') ? collapse(item) : expand(image);
-  },true);
-  document.addEventListener('keydown',event=>{
-    const image=event.target.matches?.(selector) ? event.target : null;
-    if(!image || !['Enter',' '].includes(event.key)) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const item=image.closest('.case-item');
-    item.classList.contains('case-item--expanded') ? collapse(item) : expand(image);
-  },true);
-  document.querySelectorAll(selector).forEach(image=>{
-    image.setAttribute('aria-expanded','false');
-    image.setAttribute('aria-label','点击展开高清原图，同时保留案例说明');
-    image.title='点击展开高清原图；案例说明将保持可见';
-  });
-})();
+/* 案例采用常规纵向阅读；高清细节由上方全屏查看器承担。 */
 </script>
 </body></html>
 
