@@ -570,6 +570,7 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   </div>
   <div class="lb-hint">滚轮缩放 · 按住拖拽调整位置 · 双击放大 · Esc 关闭</div>
   <div class="lb-stage"><img id="imgLightboxImg" src="" alt="放大图" draggable="false"></div>
+  <aside id="lbCaseSummary" aria-live="polite"></aside>
 </div>
 
 
@@ -594,6 +595,7 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   const stage=box&&box.querySelector('.lb-stage');
   const image=document.getElementById('imgLightboxImg');
   const zoomValue=document.getElementById('lbZoomValue');
+  const summary=document.getElementById('lbCaseSummary');
   if(!box||!stage||!image)return;
 
   let scale=1, x=0, y=0, dragging=false, startX=0, startY=0, originX=0, originY=0;
@@ -628,6 +630,16 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
     render();
   }
   function openImage(source){
+    const item=source.closest('.case-item');
+    const tag=item&&item.querySelector('.case-item-tag');
+    const text=item&&item.querySelector('.case-item-text');
+    if(summary&&text){
+      summary.innerHTML=(tag?tag.outerHTML:'')+text.outerHTML;
+      box.classList.add('show-summary');
+    }else{
+      if(summary)summary.textContent='';
+      box.classList.remove('show-summary');
+    }
     image.onload=fit;
     image.src=source.currentSrc||source.src;
     image.alt=source.alt||'案例截图放大图';
@@ -635,7 +647,7 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
     document.body.style.overflow='hidden';
     if(image.complete&&image.naturalWidth)fit();
   }
-  function close(){box.classList.remove('show');document.body.style.overflow='';dragging=false;}
+  function close(){box.classList.remove('show','show-summary');if(summary)summary.textContent='';document.body.style.overflow='';dragging=false;}
 
   document.querySelectorAll('.case-img, .case-item-img img').forEach(function(img){img.title='点击打开高清查看器';img.tabIndex=0;img.setAttribute('role','button');});
   document.addEventListener('click',function(e){
@@ -728,7 +740,14 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
 #imgLightbox .lb-toolbar button:hover{background:#344563;}
 #imgLightbox #lbZoomValue{min-width:58px;color:#e2e8f0;font-size:12px;text-align:center;font-variant-numeric:tabular-nums;}
 #imgLightbox .lb-hint{position:fixed;z-index:2;right:18px;bottom:16px;top:auto;color:#cbd5e1;font-size:12px;background:rgba(15,23,42,.78);padding:7px 12px;border-radius:20px;pointer-events:none;}
+#imgLightbox.show-summary .lb-stage{bottom:clamp(178px,27vh,300px);}
+#lbCaseSummary{display:none;position:fixed;z-index:4;left:50%;bottom:16px;transform:translateX(-50%);width:min(1060px,calc(100vw - 40px));max-height:clamp(150px,24vh,270px);overflow:auto;padding:14px 18px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.97);box-shadow:0 12px 32px rgba(0,0,0,.32);color:#334155;line-height:1.65;font-size:13px;cursor:auto;}
+#imgLightbox.show-summary #lbCaseSummary{display:block;}
+#lbCaseSummary .case-item-tag{display:inline-flex;width:auto;margin:0 0 8px;padding:5px 9px;}
+#lbCaseSummary .case-item-text{margin:0;padding:0;background:transparent;border:0;color:#334155;font-size:13px;line-height:1.7;}
+#lbCaseSummary .case-item-text b{color:#17223b;}
 @media(max-width:700px){#imgLightbox .lb-toolbar{top:8px;max-width:calc(100vw - 16px);overflow-x:auto;}#imgLightbox .lb-toolbar button{padding:6px 9px;}#imgLightbox .lb-hint{display:none;}}
+@media(max-width:700px){#imgLightbox.show-summary .lb-stage{bottom:clamp(210px,34vh,330px);}#lbCaseSummary{bottom:10px;width:calc(100vw - 20px);max-height:30vh;padding:11px 12px;font-size:12px;}#lbCaseSummary .case-item-text{font-size:12px;}}
 </style>
 <style id="case-channel-labels-style">
 .case-channel{order:0;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:800;line-height:1;color:#1d4ed8;background:#eff6ff;border:1px solid #bfdbfe;letter-spacing:.2px;}
