@@ -559,7 +559,7 @@ trendLine('chartTrendScore', TREND.score_by_channel, TREND.score_overall, 7.0, f
 trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true, 40);
 </script>
 
-<div id="imgLightbox" role="dialog" aria-modal="true" aria-label="案例截图查看器">
+<div id="legacyImgLightbox" hidden aria-hidden="true">
   <div class="lb-toolbar">
     <button type="button" data-lb-action="zoom-out" aria-label="缩小">−</button>
     <span id="lbZoomValue">适配</span>
@@ -1167,8 +1167,90 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   #weak-analysis .case-item.case-item--expanded .case-item-tag{font-size:10.5px!important;padding:5px 7px!important;}
 }
 </style>
+<style id="inline-case-scroll-viewer-style">
+/* 卡片内查看：不弹窗、不拖拽，长图在原框内通过滚轮与滚动条浏览。 */
+#weak-analysis .case-item.case-item--expanded{
+  display:flex!important;
+  flex-direction:column!important;
+  width:100%!important;
+  max-width:none!important;
+}
+#weak-analysis .case-item.case-item--expanded .case-item-img{
+  width:100%!important;
+  height:clamp(460px,72vh,860px)!important;
+  min-height:460px!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-y:scroll!important;
+  overflow-x:auto!important;
+  scrollbar-gutter:stable both-edges;
+  scrollbar-width:auto;
+  scrollbar-color:#7b8aa3 #e5eaf1;
+  background:#edf1f6!important;
+  cursor:zoom-out!important;
+}
+#weak-analysis .case-item.case-item--expanded .case-item-img::-webkit-scrollbar{width:12px;height:12px;}
+#weak-analysis .case-item.case-item--expanded .case-item-img::-webkit-scrollbar-track{background:#e5eaf1;border-radius:8px;}
+#weak-analysis .case-item.case-item--expanded .case-item-img::-webkit-scrollbar-thumb{background:#7b8aa3;border:3px solid #e5eaf1;border-radius:8px;}
+#weak-analysis .case-item.case-item--expanded .case-item-img img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  object-fit:initial!important;
+  object-position:initial!important;
+  border-radius:0!important;
+}
+#weak-analysis .case-item.case-item--expanded .case-item-tag,
+#weak-analysis .case-item.case-item--expanded .case-item-text{
+  width:100%!important;
+  margin-top:12px!important;
+  position:static!important;
+}
+#weak-analysis .case-item.case-item--expanded::after{
+  content:'高清图已在当前案例框内展开 · 可用鼠标滚轮或右侧滚动条查看完整截图 · 再次点击图片收起';
+  display:block;
+  margin-top:9px;
+  color:#64748b;
+  font-size:12px;
+  line-height:1.55;
+}
+@media(max-width:700px){
+  #weak-analysis .case-item.case-item--expanded .case-item-img{height:62vh!important;min-height:380px!important;}
+}
+</style>
 <script id="inline-case-viewer-script">
-/* 案例采用常规纵向阅读；高清细节由上方全屏查看器承担。 */
+(()=>{
+  const selector='#weak-analysis .case-item-img img';
+  const setExpanded=(image,expanded)=>{
+    const item=image.closest('.case-item');
+    item.classList.toggle('case-item--expanded',expanded);
+    image.setAttribute('aria-expanded',String(expanded));
+    image.title=expanded?'已展开高清图：可用滚轮或滚动条查看，再次点击收起':'点击在当前案例框内展开高清图';
+  };
+  document.addEventListener('click',event=>{
+    const image=event.target.closest?.(selector);
+    if(!image) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    setExpanded(image,!image.closest('.case-item').classList.contains('case-item--expanded'));
+  },true);
+  document.addEventListener('keydown',event=>{
+    const image=event.target.matches?.(selector) ? event.target : null;
+    if(!image || !['Enter',' '].includes(event.key)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    setExpanded(image,!image.closest('.case-item').classList.contains('case-item--expanded'));
+  },true);
+  document.querySelectorAll(selector).forEach(image=>{
+    image.setAttribute('aria-expanded','false');
+    image.setAttribute('aria-label','点击在当前案例框内展开高清图');
+    image.title='点击在当前案例框内展开高清图';
+  });
+})();
 </script>
 </body></html>
 
