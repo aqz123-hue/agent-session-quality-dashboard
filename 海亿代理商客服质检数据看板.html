@@ -1066,6 +1066,127 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
  });
 })();
 </script>
+<style id="inline-case-viewer-style">
+/* 高清案例查看：在同一卡片中并排呈现原图与文字，避免遮挡分析内容。 */
+#weak-analysis .case-item.case-item--expanded{
+  display:grid!important;
+  grid-template-columns:minmax(520px,1.45fr) minmax(320px,.95fr)!important;
+  grid-template-rows:auto 1fr!important;
+  column-gap:18px!important;
+  row-gap:10px!important;
+  align-items:start!important;
+}
+#weak-analysis .case-item.case-item--expanded .case-item-img{
+  grid-column:1!important;
+  grid-row:1 / span 2!important;
+  width:100%!important;
+  height:min(76vh,840px)!important;
+  min-height:420px!important;
+  padding:0!important;
+  overflow:auto!important;
+  background:#eef2f7!important;
+  cursor:zoom-out!important;
+  scrollbar-color:#94a3b8 #e2e8f0;
+}
+#weak-analysis .case-item.case-item--expanded .case-item-img img{
+  width:auto!important;
+  height:auto!important;
+  max-width:none!important;
+  max-height:none!important;
+  min-width:100%!important;
+  object-fit:initial!important;
+  object-position:initial!important;
+  margin:0 auto!important;
+  border-radius:0!important;
+}
+#weak-analysis .case-item.case-item--expanded .case-item-tag{
+  grid-column:2!important;
+  grid-row:1!important;
+  width:auto!important;
+  margin:0!important;
+  align-self:start!important;
+}
+#weak-analysis .case-item.case-item--expanded .case-item-text{
+  grid-column:2!important;
+  grid-row:2!important;
+  width:100%!important;
+  margin:0!important;
+  align-self:start!important;
+  position:sticky!important;
+  top:16px!important;
+}
+#weak-analysis .case-item.case-item--expanded::after{
+  content:'高清原图 · 可在图片区域滚动查看；再次点击图片收起';
+  grid-column:1!important;
+  grid-row:3!important;
+  color:#64748b;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:-2px;
+}
+@media(max-width:900px){
+  #weak-analysis .case-item.case-item--expanded{
+    grid-template-columns:minmax(0,1.05fr) minmax(150px,.95fr)!important;
+    column-gap:10px!important;
+  }
+  #weak-analysis .case-item.case-item--expanded .case-item-img{
+    height:62vh!important;
+    min-height:360px!important;
+  }
+  #weak-analysis .case-item.case-item--expanded .case-item-text{
+    font-size:12px!important;
+    line-height:1.65!important;
+  }
+}
+@media(max-width:520px){
+  #weak-analysis .case-item.case-item--expanded{
+    grid-template-columns:minmax(0,1fr) minmax(128px,.82fr)!important;
+    padding:10px!important;
+  }
+  #weak-analysis .case-item.case-item--expanded .case-item-img{min-height:320px!important;}
+  #weak-analysis .case-item.case-item--expanded .case-item-text{padding:10px!important;font-size:11.5px!important;}
+  #weak-analysis .case-item.case-item--expanded .case-item-tag{font-size:10.5px!important;padding:5px 7px!important;}
+}
+</style>
+<script id="inline-case-viewer-script">
+(()=>{
+  const selector='#weak-analysis .case-item-img img';
+  const collapse=item=>{
+    item.classList.remove('case-item--expanded');
+    const image=item.querySelector('.case-item-img img');
+    if(image) image.setAttribute('aria-expanded','false');
+  };
+  const expand=image=>{
+    const item=image.closest('.case-item');
+    document.querySelectorAll('#weak-analysis .case-item--expanded').forEach(openItem=>{
+      if(openItem!==item) collapse(openItem);
+    });
+    item.classList.add('case-item--expanded');
+    image.setAttribute('aria-expanded','true');
+  };
+  document.addEventListener('click',event=>{
+    const image=event.target.closest?.(selector);
+    if(!image) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const item=image.closest('.case-item');
+    item.classList.contains('case-item--expanded') ? collapse(item) : expand(image);
+  },true);
+  document.addEventListener('keydown',event=>{
+    const image=event.target.matches?.(selector) ? event.target : null;
+    if(!image || !['Enter',' '].includes(event.key)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const item=image.closest('.case-item');
+    item.classList.contains('case-item--expanded') ? collapse(item) : expand(image);
+  },true);
+  document.querySelectorAll(selector).forEach(image=>{
+    image.setAttribute('aria-expanded','false');
+    image.setAttribute('aria-label','点击展开高清原图，同时保留案例说明');
+    image.title='点击展开高清原图；案例说明将保持可见';
+  });
+})();
+</script>
 </body></html>
 
 
