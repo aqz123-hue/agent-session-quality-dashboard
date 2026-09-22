@@ -1222,11 +1222,40 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   #weak-analysis .case-item.case-item--expanded .case-item-img{height:62vh!important;min-height:380px!important;}
 }
 </style>
+<style id="recommendation-case-focus-style">
+/* 推荐介绍双案例：点击其中一张后，当前图片取得主阅读宽度，另一张保留为预览。 */
+#weak-analysis .weak-card--row.case-pair--focus-left{grid-template-columns:minmax(0,2.15fr) minmax(190px,.75fr)!important;}
+#weak-analysis .weak-card--row.case-pair--focus-right{grid-template-columns:minmax(190px,.75fr) minmax(0,2.15fr)!important;}
+#weak-analysis .weak-card--row.case-pair--focus-left>.case-item:not(.case-item--expanded) .case-item-img,
+#weak-analysis .weak-card--row.case-pair--focus-right>.case-item:not(.case-item--expanded) .case-item-img{height:220px!important;min-height:220px!important;}
+#weak-analysis .weak-card--row.case-pair--focus-left>.case-item:not(.case-item--expanded) .case-item-text,
+#weak-analysis .weak-card--row.case-pair--focus-right>.case-item:not(.case-item--expanded) .case-item-text{font-size:12px!important;line-height:1.6!important;}
+@media(max-width:900px){
+  #weak-analysis .weak-card--row.case-pair--focus-left,
+  #weak-analysis .weak-card--row.case-pair--focus-right{grid-template-columns:1fr!important;}
+}
+</style>
 <script id="inline-case-viewer-script">
 (()=>{
   const selector='#weak-analysis .case-item-img img';
   const setExpanded=(image,expanded)=>{
     const item=image.closest('.case-item');
+    const pair=item.parentElement?.classList.contains('weak-card--row') ? item.parentElement : null;
+    if(pair){
+      const pairItems=[...pair.querySelectorAll(':scope > .case-item')];
+      if(expanded){
+        pairItems.forEach(other=>{
+          if(other!==item){
+            other.classList.remove('case-item--expanded');
+            other.querySelector('.case-item-img img')?.setAttribute('aria-expanded','false');
+          }
+        });
+        pair.classList.remove('case-pair--focus-left','case-pair--focus-right');
+        pair.classList.add(pairItems.indexOf(item)===0?'case-pair--focus-left':'case-pair--focus-right');
+      }else{
+        pair.classList.remove('case-pair--focus-left','case-pair--focus-right');
+      }
+    }
     item.classList.toggle('case-item--expanded',expanded);
     image.setAttribute('aria-expanded',String(expanded));
     image.title=expanded?'已展开高清图：可用滚轮或滚动条查看，再次点击收起':'点击在当前案例框内展开高清图';
