@@ -918,7 +918,7 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   .summary-number { color: #2563eb; font-weight: 800; }
   .summary-focus { color: #c2410c; font-weight: 800; }
   .summary-risk { color: #dc2626; font-weight: 800; }
-  .section-mini-summary { margin: 16px 0 6px; padding: 12px 14px; border: 1px solid #dbe7f7; border-left: 4px solid #4f8df7; border-radius: 8px; background: #f8fbff; color: #41536f; font-size: 14px; line-height: 1.7; }
+  .section-mini-summary { margin: 16px 0 6px; padding: 12px 14px; border: 1px solid #dbe7f7; border-radius: 8px; background: #f8fbff; color: #41536f; font-size: 14px; line-height: 1.7; box-shadow: 0 3px 10px rgba(30, 58, 95, .04); }
   .section-mini-summary b { color: #1e3a5f; }
   .section-mini-summary .mini-focus { color: #c2410c; font-weight: 800; }
   .section-mini-summary .mini-risk { color: #dc2626; font-weight: 800; }
@@ -1079,8 +1079,6 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   const sections=[...document.querySelectorAll('.section')];
   const overview=sections.find(x=>x.textContent.includes('整体质检概览'));
   add(overview?.querySelector('.kpi-grid'),'<div class="section-mini-summary"><b>整体小结：</b>本期共查检45条会话，其中44条有效。综合得分为6.85分，基础服务与四项核对具备稳定基础；后续应将改善资源集中于<span class="mini-focus">需求挖掘与精准推荐</span>，而非普遍增加核对动作。</div>');
-  const benchmark=sections.find(x=>x.textContent.includes('总部得分对标'));
-  add(benchmark?.querySelector('.grid-2'),'<div class="section-mini-summary"><b>对标小结：</b>服务态度已与总部持平，综合得分差距主要由<span class="mini-risk">需求挖掘低2.18分</span>拉开；推荐介绍与跟进维护为次级改善项，应优先建立需求确认后的推荐衔接标准。</div>');
   const scoreTable=[...document.querySelectorAll('table.heat-table')].find(t=>t.tHead?.textContent.includes('综合均分')&&!t.closest('.benchmark-card'));
   add(scoreTable,'<div class="section-mini-summary"><b>会话得分小结：</b>三店综合得分区间为6.81—6.92分，但需求挖掘从3.50分到6.00分，差距达2.50分。方太电器旗舰店应优先补齐<span class="mini-focus">推荐前的需求判断与承接</span>。</div>');
   const checkTable=[...document.querySelectorAll('table.heat-table')].find(t=>t.tHead?.textContent.includes('综合核对率'));
