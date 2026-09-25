@@ -1078,7 +1078,6 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   const add=(target,html)=>{ if(target && !target.parentElement.querySelector('.section-mini-summary')) target.insertAdjacentHTML('afterend',html); };
   const sections=[...document.querySelectorAll('.section')];
   const overview=sections.find(x=>x.textContent.includes('整体质检概览'));
-  add(overview?.querySelector('.kpi-grid'),'<div class="section-mini-summary"><b>整体小结：</b>本期共查检45条会话，其中44条有效。综合得分为6.85分，基础服务与四项核对具备稳定基础；后续应将改善资源集中于<span class="mini-focus">需求挖掘与精准推荐</span>，而非普遍增加核对动作。</div>');
   const scoreTable=[...document.querySelectorAll('table.heat-table')].find(t=>t.tHead?.textContent.includes('综合均分')&&!t.closest('.benchmark-card'));
   add(scoreTable,'<div class="section-mini-summary"><b>会话得分小结：</b>三店综合得分区间为6.81—6.92分，但需求挖掘从3.50分到6.00分，差距达2.50分。方太电器旗舰店应优先补齐<span class="mini-focus">推荐前的需求判断与承接</span>。</div>');
   const checkTable=[...document.querySelectorAll('table.heat-table')].find(t=>t.tHead?.textContent.includes('综合核对率'));
