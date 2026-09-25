@@ -1079,7 +1079,7 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   const sections=[...document.querySelectorAll('.section')];
   const overview=sections.find(x=>x.textContent.includes('整体质检概览'));
   const scoreTable=[...document.querySelectorAll('table.heat-table')].find(t=>t.tHead?.textContent.includes('综合均分')&&!t.closest('.benchmark-card'));
-  add(scoreTable,'<div class="section-mini-summary"><b>会话得分小结：</b>两渠道基础服务能力持平，服务态度、跟进维护稳定在 7 分左右；需求挖掘与推荐介绍是拉开差距的重要因素。三店综合得分区间为6.81—6.92分，需求挖掘得分为3.50—6.00分，整体差距2.50分；方太电器旗舰店应优先补齐<span class="mini-focus">需求挖掘能力</span>。</div>');
+  add(scoreTable,'<div class="section-mini-summary"><b>会话得分小结：</b>三店综合得分集中在6.81—6.92分，综合均分差异不大；服务态度均为7.00分、跟进维护为6.93—7.00分，基础接待表现相对稳定。当前最主要的能力分化来自需求挖掘：方太电器旗舰店为3.50分，较另外两店低2.50分，应优先补齐<span class="mini-focus">推荐前的需求确认能力</span>；推荐介绍存在一定差异，但不是本期首要矛盾。</div>');
   const checkTable=[...document.querySelectorAll('table.heat-table')].find(t=>t.tHead?.textContent.includes('综合核对率'));
   add(checkTable,'<div class="section-mini-summary"><b>核对小结：</b>四项整体核对率均高于代理商同期水平；局部风险集中在尺寸图发送、气源确认及安装场景下的网点覆盖确认，应将对应情形固化为<span class="mini-focus">触发式核对清单</span>。</div>');
 })();
