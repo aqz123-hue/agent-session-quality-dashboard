@@ -395,7 +395,7 @@ canvas{max-height:330px;}
 
   <div class="sub-title">3.1 会话得分 · 基础四项（服务态度 / 需求挖掘 / 推荐介绍 / 跟进维护）</div>
   <div class="grid-2">
-    <div class="card chart-summary-card"><canvas id="chartFour" width="804" height="396" style="display: block; box-sizing: border-box; height: 330px; width: 670px;"></canvas><p class="chart-summary"><b>基础能力：</b>两渠道基础服务能力基本持平，服务态度、跟进维护均稳定在 7 分左右（满分 10 分）；需求挖掘与其他分项的差距显著，是当前最需要补齐的能力缺口。</p></div>
+    <div class="card chart-summary-card"><canvas id="chartFour" width="804" height="396" style="display: block; box-sizing: border-box; height: 330px; width: 670px;"></canvas></div>
     <div class="card chart-summary-card"><canvas id="chartTrendScore" width="804" height="396" style="display: block; box-sizing: border-box; height: 330px; width: 670px;"></canvas><p class="chart-summary"><b>月度走势：</b>6-7 月整体值按两家有历史数据店铺均值计算，8 月按三家店铺计算；方太旗舰店整体回升，方太电器旗舰店在 8 月小幅回升。</p></div>
   </div>
 <table class="heat-table"><thead><tr><th>渠道</th><th>综合均分</th><th>服务态度</th><th>需求挖掘</th><th>推荐介绍</th><th>跟进维护</th></tr></thead><tbody><tr><td>天猫</td><td class="heat-mid">6.70</td><td class="heat-good">7.00</td><td class="heat-bad">4.75</td><td class="heat-mid">6.26</td><td class="heat-good">6.92</td></tr>
@@ -1079,7 +1079,7 @@ trendLine('chartTrendRate', TREND.rate_by_channel, TREND.rate_overall, 100, true
   const sections=[...document.querySelectorAll('.section')];
   const overview=sections.find(x=>x.textContent.includes('整体质检概览'));
   const scoreTable=[...document.querySelectorAll('table.heat-table')].find(t=>t.tHead?.textContent.includes('综合均分')&&!t.closest('.benchmark-card'));
-  add(scoreTable,'<div class="section-mini-summary"><b>会话得分小结：</b>三店综合得分区间为6.81—6.92分，但需求挖掘从3.50分到6.00分，差距达2.50分。方太电器旗舰店应优先补齐<span class="mini-focus">推荐前的需求判断与承接</span>。</div>');
+  add(scoreTable,'<div class="section-mini-summary"><b>会话得分小结：</b>两渠道基础服务能力持平，服务态度、跟进维护稳定在 7 分左右；需求挖掘与推荐介绍是拉开差距的重要因素。三店综合得分区间为6.81—6.92分，需求挖掘得分为3.50—6.00分，整体差距2.50分；方太电器旗舰店应优先补齐<span class="mini-focus">需求挖掘能力</span>。</div>');
   const checkTable=[...document.querySelectorAll('table.heat-table')].find(t=>t.tHead?.textContent.includes('综合核对率'));
   add(checkTable,'<div class="section-mini-summary"><b>核对小结：</b>四项整体核对率均高于代理商同期水平；局部风险集中在尺寸图发送、气源确认及安装场景下的网点覆盖确认，应将对应情形固化为<span class="mini-focus">触发式核对清单</span>。</div>');
 })();
