@@ -61,7 +61,7 @@
     <div class="h-row">
       <h1>代理商会话质量 · 统一看板</h1>
       <span class="sub">15家代理商店铺 · 会话质量评估 · 月度数据看板</span>
-      <span class="badge">数据更新至 8月（4-8月）</span>
+      <span class="badge">数据更新至 9月完整月（4-9月）</span>
     </div>
     <div class="selector">
       <span class="month-label">月份</span>
@@ -80,7 +80,7 @@
   </div>
 
 <script>
-const MONTHS = [{"key":"2026-04","label":"4月","pending":false,"src":"agent-dashboard-reports/2026-04.html"},{"key":"2026-05","label":"5月","pending":false,"src":"agent-dashboard-reports/2026-05.html"},{"key":"2026-06","label":"6月","pending":false,"src":"agent-dashboard-reports/2026-06.html"},{"key":"2026-H1","label":"半年度","pending":false,"src":"agent-dashboard-reports/2026-H1.html"},{"key":"2026-07","label":"7月","pending":false,"src":"agent-dashboard-reports/2026-07.html"},{"key":"2026-H1-07","label":"半年度（4-7月）","pending":false,"src":"agent-dashboard-reports/2026-H1-07.html"},{"key":"2026-08","label":"8月","pending":false,"src":"agent-dashboard-reports/2026-08.html"}];
+const MONTHS = [{"key":"2026-04","label":"4月","pending":false,"src":"agent-dashboard-reports/2026-04.html"},{"key":"2026-05","label":"5月","pending":false,"src":"agent-dashboard-reports/2026-05.html"},{"key":"2026-06","label":"6月","pending":false,"src":"agent-dashboard-reports/2026-06.html"},{"key":"2026-H1","label":"半年度","pending":false,"src":"agent-dashboard-reports/2026-H1.html"},{"key":"2026-07","label":"7月","pending":false,"src":"agent-dashboard-reports/2026-07.html"},{"key":"2026-H1-07","label":"半年度（4-7月）","pending":false,"src":"agent-dashboard-reports/2026-H1-07.html"},{"key":"2026-08","label":"8月","pending":false,"src":"agent-dashboard-reports/2026-08.html"},{"key":"2026-09","label":"9月","pending":false,"src":"agent-dashboard-reports/2026-09.html"}];
 const selEl    = document.getElementById('monthSel');
 const curEl    = document.getElementById('curMonth');
 const viewer   = document.getElementById('viewer');
@@ -118,7 +118,7 @@ function showMonth(idx){
 selEl.addEventListener('change', ()=> showMonth(+selEl.value));
 
 // 默认：上次选择 或 首月
-let start = 0;
+let start = MONTHS.length - 1;
 try{ const s = localStorage.getItem('agent_dash_month'); if(s!==null && MONTHS[+s]) start = +s; }catch(e){}
 selEl.value = String(start);
 showMonth(start);
